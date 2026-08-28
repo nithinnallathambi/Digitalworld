@@ -11,11 +11,8 @@
     
     <style>
         :root {
-            /* Base Core Colors */
             --primary: #6366f1;
             --primary-hover: #4f46e5;
-            
-            /* Dark Mode Defaults (Active by default) */
             --bg-main: #060913;
             --bg-card: rgba(15, 23, 42, 0.72);
             --bg-glass: rgba(13, 19, 36, 0.8);
@@ -24,30 +21,26 @@
             --bg-result: rgba(7, 12, 24, 0.75);
             --bg-tt-th: #1e293b;
             --bg-tt: rgba(4, 8, 18, 0.9);
-            
             --text-main: #f8fafc;
             --text-muted: #a1a1aa;
             --text-dim: #64748b;
-            
             --border-color: rgba(139, 92, 246, 0.22);
             --border-highlight: rgba(0, 243, 255, 0.45);
-            
             --accent-cyan: #00f3ff;
             --accent-green: #10b981;
             --accent-amber: #f59e0b;
             --accent-rose: #f43f5e;
             --accent-purple: #c084fc;
-            
+            --wire-off: #475569;
+            --wire-on: #10b981;
             --shadow-card: 0 16px 40px -10px rgba(0, 0, 0, 0.65), 0 0 0 1px var(--border-color);
             --shadow-btn: 0 4px 20px rgba(99, 102, 241, 0.4);
-            
             --radius-pill: 9999px;
             --radius-lg: 20px;
             --radius-md: 14px;
             --radius-sm: 8px;
         }
 
-        /* Light Mode Theme Overrides */
         body.light-mode {
             --bg-main: #f8fafc;
             --bg-card: rgba(255, 255, 255, 0.85);
@@ -57,326 +50,107 @@
             --bg-result: #f8fafc;
             --bg-tt-th: #e2e8f0;
             --bg-tt: #ffffff;
-            
             --text-main: #0f172a;
             --text-muted: #475569;
             --text-dim: #94a3b8;
-            
             --border-color: rgba(99, 102, 241, 0.25);
             --border-highlight: rgba(99, 102, 241, 0.6);
-            
-            --accent-cyan: #0284c7; /* Darker blue instead of neon cyan */
+            --accent-cyan: #0284c7;
             --accent-green: #059669;
             --accent-amber: #d97706;
             --accent-purple: #7e22ce;
-            
+            --wire-off: #94a3b8;
+            --wire-on: #059669;
             --shadow-card: 0 16px 40px -10px rgba(0, 0, 0, 0.1), 0 0 0 1px var(--border-color);
             --shadow-btn: 0 4px 15px rgba(99, 102, 241, 0.3);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            position: relative;
-            transition: background-color 0.4s ease, color 0.4s ease;
-        }
-
-        /* Full Screen Background Motion Canvas */
-        #bgCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-            display: block;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; transition: background-color 0.4s ease, color 0.4s ease; }
+        
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; display: block; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-main); }
         ::-webkit-scrollbar-thumb { background: var(--bg-block); border-radius: 4px; border: 1px solid var(--border-color); }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* Top Infinite Auto-Scrolling Announcement Marquee Bar */
-        .marquee-container {
-            background: linear-gradient(90deg, #312e81 0%, #1e1b4b 25%, #0284c7 50%, #4c1d95 75%, #312e81 100%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.09em;
-            text-transform: uppercase;
-            padding: 0.55rem 0;
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-            z-index: 101;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
+        .marquee-container { background: linear-gradient(90deg, #312e81 0%, #1e1b4b 25%, #0284c7 50%, #4c1d95 75%, #312e81 100%); border-bottom: 1px solid rgba(255, 255, 255, 0.1); color: #ffffff; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; padding: 0.55rem 0; overflow: hidden; white-space: nowrap; position: relative; z-index: 101; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         .marquee-track { display: inline-flex; gap: 2rem; animation: marqueeScroll 28s linear infinite; }
         .marquee-container:hover .marquee-track { animation-play-state: paused; }
         .marquee-item { display: inline-flex; align-items: center; gap: 0.5rem; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
         .marquee-item span.dot { width: 6px; height: 6px; background: #00f3ff; border-radius: 50%; box-shadow: 0 0 8px #00f3ff; }
         @keyframes marqueeScroll { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
 
-        /* Header Styling */
-        header.geniani-header {
-            background: var(--bg-glass);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border-color);
-            position: relative;
-            z-index: 100;
-            padding: 1.75rem 1.5rem 1.5rem 1.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 0.85rem;
-            position: relative;
-        }
-
-        .theme-toggle-btn {
-            position: absolute;
-            right: 0;
-            top: 0;
-            background: var(--bg-block);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-pill);
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .theme-toggle-btn:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .header-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            background: rgba(99, 102, 241, 0.15);
-            border: 1px solid rgba(129, 140, 248, 0.4);
-            color: var(--primary-light);
-            padding: 0.45rem 1.25rem;
-            border-radius: var(--radius-pill);
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
+        header.geniani-header { background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-color); position: relative; z-index: 100; padding: 1.75rem 1.5rem 1.5rem 1.5rem; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.85rem; position: relative; }
+        .theme-toggle-btn { position: absolute; right: 0; top: 0; background: var(--bg-block); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: var(--radius-pill); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.4rem; }
+        .theme-toggle-btn:hover { border-color: var(--primary); box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); transform: translateY(-2px); }
+        .header-badge { display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(129, 140, 248, 0.4); color: var(--accent-purple); padding: 0.45rem 1.25rem; border-radius: var(--radius-pill); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
         body.light-mode .header-badge { color: var(--primary); }
-
-        .header-badge .badge-pulse {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-cyan);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--accent-cyan);
-            animation: pulseGlow 2s infinite;
-        }
+        .header-badge .badge-pulse { width: 8px; height: 8px; background-color: var(--accent-cyan); border-radius: 50%; box-shadow: 0 0 10px var(--accent-cyan); animation: pulseGlow 2s infinite; }
         @keyframes pulseGlow { 0% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.3); } 100% { opacity: 0.4; transform: scale(0.9); } }
-
-        header h1 {
-            font-size: 2.35rem;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            background: linear-gradient(135deg, var(--text-main) 10%, #a5b4fc 40%, var(--accent-cyan) 80%, var(--accent-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.25;
-        }
-
+        header h1 { font-size: 2.35rem; font-weight: 800; letter-spacing: -0.03em; background: linear-gradient(135deg, var(--text-main) 10%, #a5b4fc 40%, var(--accent-cyan) 80%, var(--accent-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.25; }
         header p.subtitle { color: var(--text-muted); font-size: 0.98rem; max-width: 780px; font-weight: 400; }
 
-        /* Main Container & Card Styling */
         .container { max-width: 1200px; width: 100%; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
-
-        .card {
-            background: var(--bg-card);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: var(--radius-lg);
-            padding: 2.25rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-card);
-            border: 1px solid var(--border-color);
-            transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-purple), transparent);
-            opacity: 0.6; transition: opacity 0.3s ease;
-        }
-
-        .card:hover {
-            border-color: var(--border-highlight);
-            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.4), 0 0 30px rgba(99, 102, 241, 0.1);
-        }
-
+        .card { background: var(--bg-card); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 2.25rem; margin-bottom: 2rem; box-shadow: var(--shadow-card); border: 1px solid var(--border-color); transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-purple), transparent); opacity: 0.6; }
+        .card:hover { border-color: var(--border-highlight); box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.4), 0 0 30px rgba(99, 102, 241, 0.1); }
         .card h2 { font-size: 1.35rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem; }
 
         label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-muted); letter-spacing: 0.01em; }
-
-        input[type="text"], input[type="password"], input[type="number"], textarea, .styled-select {
-            width: 100%; padding: 0.9rem 1.15rem; background: var(--bg-input);
-            border: 1px solid var(--border-color); border-radius: var(--radius-md);
-            font-size: 0.98rem; color: var(--text-main); font-family: 'Fira Code', monospace;
-            margin-bottom: 1.25rem; transition: all 0.25s ease;
-            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-        
+        input[type="text"], input[type="number"], textarea, .styled-select { width: 100%; padding: 0.9rem 1.15rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.98rem; color: var(--text-main); font-family: 'Fira Code', monospace; margin-bottom: 1.25rem; transition: all 0.25s ease; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1); }
         .calc-input { padding: 0.6rem 0.85rem !important; margin-bottom: 0 !important; border-radius: var(--radius-sm) !important; }
         textarea { height: 100px; resize: vertical; font-family: 'Plus Jakarta Sans', sans-serif; }
-
-        input[type="text"]:focus, input[type="number"]:focus, textarea:focus, .styled-select:focus {
-            outline: none; border-color: var(--primary); background: var(--bg-card);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), inset 0 2px 6px rgba(0, 0, 0, 0.05);
-        }
-
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus, .styled-select:focus { outline: none; border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), inset 0 2px 6px rgba(0, 0, 0, 0.05); }
         input::placeholder, textarea::placeholder { color: var(--text-dim); }
 
-        .ai-divider {
-            display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0;
-            color: var(--text-dim); font-size: 0.75rem; font-weight: 700;
-            letter-spacing: 0.1em; text-transform: uppercase;
-        }
+        .ai-divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; color: var(--text-dim); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
         .ai-divider::before, .ai-divider::after { content: ""; flex: 1; height: 1px; background: var(--border-color); }
 
         #imagePreviewWrap { position: relative; display: inline-block; margin-bottom: 1.25rem; }
         #imagePreview { max-width: 100%; max-height: 320px; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-card); display: block; }
-        #clearImageBtn {
-            position: absolute; top: 8px; right: 8px; background: rgba(6, 9, 19, 0.85);
-            color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-pill);
-            width: 28px; height: 28px; cursor: pointer; font-size: 0.9rem; line-height: 1;
-        }
+        #clearImageBtn { position: absolute; top: 8px; right: 8px; background: rgba(6, 9, 19, 0.85); color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-pill); width: 28px; height: 28px; cursor: pointer; font-size: 0.9rem; line-height: 1; }
 
-        .styled-select {
-            font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%236366f1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
-            background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 16px 12px; padding-right: 2.75rem;
-        }
+        .styled-select { cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%236366f1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>'); background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 16px 12px; padding-right: 2.75rem; }
 
-        /* Tabs */
-        .tabs-wrapper {
-            background: var(--bg-block); padding: 0.45rem; border-radius: var(--radius-md);
-            border: 1px solid var(--border-color); margin-bottom: 1.75rem;
-        }
+        .tabs-wrapper { background: var(--bg-block); padding: 0.45rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.75rem; }
         .tabs { display: flex; align-items: center; gap: 0.4rem; overflow-x: auto; scroll-behavior: smooth; }
-        .tab {
-            flex: 1; white-space: nowrap; background: transparent; border: 1px solid transparent;
-            padding: 0.8rem 1.1rem; font-size: 0.9rem; font-weight: 600; color: var(--text-muted);
-            cursor: pointer; border-radius: var(--radius-sm); transition: all 0.25s ease;
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-        }
+        .tab { flex: 1; white-space: nowrap; background: transparent; border: 1px solid transparent; padding: 0.8rem 1.1rem; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: var(--radius-sm); transition: all 0.25s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
         .tab:hover { color: var(--text-main); background: rgba(139, 92, 246, 0.08); }
-        .tab.active {
-            color: #ffffff; background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
-            border-color: rgba(99, 102, 241, 0.5); box-shadow: var(--shadow-btn);
-        }
-        .tab-content { display: none; animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .tab.active { color: #ffffff; background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%); border-color: rgba(99, 102, 241, 0.5); box-shadow: var(--shadow-btn); }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Radio Group */
-        .radio-group {
-            display: flex; gap: 1.5rem; margin-bottom: 1.25rem; padding: 0.85rem 1.15rem;
-            background: var(--bg-block); border-radius: var(--radius-md); border: 1px solid var(--border-color);
-        }
+        .radio-group { display: flex; gap: 1.5rem; margin-bottom: 1.25rem; padding: 0.85rem 1.15rem; background: var(--bg-block); border-radius: var(--radius-md); border: 1px solid var(--border-color); }
         .radio-group label { margin: 0; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500; color: var(--text-main); }
         .radio-group input[type="radio"] { accent-color: var(--primary); width: 17px; height: 17px; }
 
-        /* Buttons */
-        button.primary-btn {
-            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 50%, #0284c7 100%);
-            color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.95rem 1.8rem;
-            font-size: 0.98rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; width: 100%;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: var(--shadow-btn);
-            display: flex; align-items: center; justify-content: center; gap: 0.6rem;
-        }
+        button.primary-btn { background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 50%, #0284c7 100%); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.95rem 1.8rem; font-size: 0.98rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; width: 100%; transition: all 0.25s ease; box-shadow: var(--shadow-btn); display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
         button.primary-btn:hover { background: linear-gradient(135deg, #4f46e5 0%, #3730a3 50%, #0369a1 100%); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5); }
         
-        button.secondary-btn {
-            background: var(--bg-block); color: var(--text-main); border: 1px solid var(--border-color);
-            padding: 0.75rem 1.4rem; font-size: 0.9rem; font-weight: 600; border-radius: var(--radius-md);
-            cursor: pointer; margin-bottom: 1.25rem; transition: all 0.2s ease;
-        }
+        button.secondary-btn { background: var(--bg-block); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.75rem 1.4rem; font-size: 0.9rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 1.25rem; transition: all 0.2s ease; }
         button.secondary-btn:hover { background: var(--bg-input); border-color: var(--primary); transform: translateY(-1px); }
+        button.secondary-btn.active { background: var(--primary); color: #fff; border-color: rgba(255,255,255,0.3); }
 
-        .error {
-            color: var(--accent-rose); margin-top: 1rem; font-weight: 600; text-align: center;
-            background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.35);
-            padding: 0.85rem; border-radius: var(--radius-md); display: none;
-        }
+        .error { color: var(--accent-rose); margin-top: 1rem; font-weight: 600; text-align: center; background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.35); padding: 0.85rem; border-radius: var(--radius-md); display: none; }
         .error:not(:empty) { display: block; }
 
-        /* Output Sections */
-        .multi-output-section {
-            background: var(--bg-card); backdrop-filter: blur(16px); border-radius: var(--radius-lg);
-            padding: 2.25rem; margin-bottom: 2rem; box-shadow: var(--shadow-card); border: 1px solid var(--border-color);
-            animation: fadeIn 0.4s ease-out;
-        }
-        .output-header {
-            border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;
-            color: var(--text-main); font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem;
-        }
+        .multi-output-section { background: var(--bg-card); backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 2.25rem; margin-bottom: 2rem; box-shadow: var(--shadow-card); border: 1px solid var(--border-color); animation: fadeIn 0.4s ease-out; }
+        .output-header { border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem; color: var(--text-main); font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         @media (max-width: 850px) { .grid-2 { grid-template-columns: 1fr; } .tabs { flex-wrap: wrap; } header h1 { font-size: 1.8rem; } .theme-toggle-btn { position: relative; margin-top: 10px; } }
 
-        .result-box {
-            background: var(--bg-result); padding: 1.5rem; border-radius: var(--radius-md);
-            border: 1px solid var(--border-color); box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05); margin-bottom: 2rem;
-        }
-
-        .verification {
-            padding: 1rem 1.25rem; border-radius: var(--radius-md); font-weight: 600; margin-bottom: 1.5rem;
-            text-align: center; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-        }
+        .result-box { background: var(--bg-result); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05); margin-bottom: 2rem; }
+        .verification { padding: 1rem 1.25rem; border-radius: var(--radius-md); font-weight: 600; margin-bottom: 1.5rem; text-align: center; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
         .verification.success { background-color: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.4); }
         .verification.fail { background-color: rgba(244, 63, 94, 0.15); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.4); }
 
         h3 { font-size: 1.2rem; color: var(--text-main); font-weight: 700; margin-bottom: 1rem; }
         h4 { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 0.8rem; }
+        .code-font { font-family: 'Fira Code', monospace; background: var(--bg-tt); padding: 0.6rem 1rem; border-radius: var(--radius-sm); font-size: 0.98rem; color: var(--accent-cyan); border: 1px solid var(--border-color); display: inline-block; margin-top: 0.25rem; word-break: break-all; }
 
-        .code-font {
-            font-family: 'Fira Code', monospace; background: var(--bg-tt); padding: 0.6rem 1rem;
-            border-radius: var(--radius-sm); font-size: 0.98rem; color: var(--accent-cyan);
-            border: 1px solid var(--border-color); display: inline-block; margin-top: 0.25rem; word-break: break-all;
-        }
-
-        /* Truth Table Table */
         .tt-container { max-height: 380px; overflow-y: auto; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-tt); }
         table { width: 100%; border-collapse: collapse; text-align: center; }
         th, td { padding: 0.65rem; font-size: 0.88rem; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); font-family: 'Fira Code', monospace; color: var(--text-main); }
@@ -385,25 +159,19 @@
         td.tt-one { color: var(--accent-green); font-weight: bold; }
         td.tt-zero { color: var(--text-dim); }
         td.tt-x { color: var(--accent-amber); font-weight: bold; }
-
         select.tt-select { background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; }
 
-        /* Wrappers for Visuals */
         .kmap-wrapper { background: var(--bg-result); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 2rem; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05); }
         .circuit-box { background: var(--bg-result); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem; }
-        .svg-container { overflow: auto; background: var(--bg-tt); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; max-height: 550px; width: 100%; box-shadow: inset 0 2px 15px rgba(0,0,0,0.1); position: relative; }
+        .svg-container { overflow: auto; background: var(--bg-tt); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; max-height: 650px; width: 100%; box-shadow: inset 0 2px 15px rgba(0,0,0,0.1); position: relative; }
         .svg-container svg { display: block; margin: 0 auto; }
 
-        /* Block Diagram */
-        .block-diagram { display: flex; justify-content: center; align-items: center; padding: 2.5rem; background: var(--bg-tt); border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem; }
-        .block-box { background: var(--bg-block); border: 2px solid var(--accent-cyan); border-radius: var(--radius-md); padding: 2rem 3rem; text-align: center; position: relative; font-weight: 700; font-size: 1.2rem; color: var(--text-main); box-shadow: 0 0 20px rgba(0, 243, 255, 0.15); min-width: 180px; }
-        .block-inputs, .block-outputs { display: flex; flex-direction: column; justify-content: space-around; position: absolute; top: 0; bottom: 0; }
-        .block-inputs { left: -75px; } .block-outputs { right: -75px; }
-        .block-pin { display: flex; align-items: center; font-size: 0.85rem; font-family: 'Fira Code', monospace; color: var(--accent-cyan); }
-        .block-pin.in::after { content: ''; display: inline-block; width: 35px; height: 2px; background: var(--primary); margin-left: 8px; }
-        .block-pin.out::before { content: ''; display: inline-block; width: 35px; height: 2px; background: var(--primary); margin-right: 8px; }
+        .metrics-badge { display: inline-flex; gap: 1.25rem; margin-bottom: 0.75rem; background: var(--bg-block); padding: 0.4rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.85rem; font-family: 'Fira Code', monospace; }
 
-        /* Scroll Top Button */
+        .seg8-display-wrapper { display: flex; justify-content: center; align-items: center; padding: 2rem; background: #020617; border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 1.5rem; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+        .seg8-segment { fill: #1e293b; transition: fill 0.15s ease, filter 0.15s ease; }
+        .seg8-segment.active { fill: #f43f5e; filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.85)); }
+
         #scrollTopBtn { display: none; position: fixed; bottom: 30px; right: 30px; z-index: 99; font-size: 1.25rem; border: none; outline: none; background: var(--primary); color: white; cursor: pointer; width: 48px; height: 48px; border-radius: 50%; box-shadow: var(--shadow-btn); transition: all 0.3s ease; }
         #scrollTopBtn:hover { background-color: var(--primary-hover); transform: translateY(-4px) scale(1.05); }
 
@@ -411,24 +179,19 @@
     </style>
 </head>
 <body>
-    <!-- Full-screen animated motion background canvas -->
     <canvas id="bgCanvas"></canvas>
 
     <div class="marquee-container" aria-label="Engine Capabilities Ticker">
         <div class="marquee-track">
             <div class="marquee-item">⚡ 1 TO 6 VARIABLE KARNAUGH MAPS <span class="dot"></span></div>
             <div class="marquee-item">🔬 QUINE-MCCLUSKEY OPTIMIZER <span class="dot"></span></div>
-            <div class="marquee-item">🛠️ UNIVERSAL NAND & NOR SYNTHESIZER <span class="dot"></span></div>
+            <div class="marquee-item">🛠️ OPTIMIZED UNIVERSAL NAND & NOR SYNTHESIZER <span class="dot"></span></div>
+            <div class="marquee-item">💡 8-SEGMENT DISPLAY DECODER (A-G + DP) <span class="dot"></span></div>
+            <div class="marquee-item">✏️ INTERACTIVE CIRCUIT SCHEMATIC DRAWING <span class="dot"></span></div>
             <div class="marquee-item">🤖 GEMINI AI LOGIC ASSISTANT <span class="dot"></span></div>
+            <div class="marquee-item">📷 AI CIRCUIT IMAGE READER <span class="dot"></span></div>
             <div class="marquee-item">🧮 ARITHMETIC CIRCUIT GENERATOR <span class="dot"></span></div>
             <div class="marquee-item">💻 AI RTL CODE GENERATOR <span class="dot"></span></div>
-            <div class="marquee-item">📷 AI CIRCUIT IMAGE READER <span class="dot"></span></div>
-            <div class="marquee-item">⚡ 1 TO 6 VARIABLE KARNAUGH MAPS <span class="dot"></span></div>
-            <div class="marquee-item">🔬 QUINE-MCCLUSKEY OPTIMIZER <span class="dot"></span></div>
-            <div class="marquee-item">🛠️ UNIVERSAL NAND & NOR SYNTHESIZER <span class="dot"></span></div>
-            <div class="marquee-item">🤖 GEMINI AI LOGIC ASSISTANT <span class="dot"></span></div>
-            <div class="marquee-item">🧮 ARITHMETIC CIRCUIT GENERATOR <span class="dot"></span></div>
-            <div class="marquee-item">📷 AI CIRCUIT IMAGE READER <span class="dot"></span></div>
         </div>
     </div>
 
@@ -440,38 +203,26 @@
                 Digital Circuits EE1202
             </div>
             <h1>Advanced Digital Logic Synthesizer</h1>
-            <p class="subtitle">Minimize boolean expressions, solve Quine-McCluskey prime implicants, generate visual 1 to 6 variable Karnaugh Maps, synthesize universal logic circuits, write RTL code, and read circuit diagram images instantly using AI.</p>
+            <p class="subtitle">Minimize boolean expressions, solve Quine-McCluskey prime implicants, generate visual 1 to 6 variable Karnaugh Maps, synthesize optimized universal logic circuits (with minimal gates, shared nodes, and clean wire-jump routing), draw custom schematics, test 8-segment displays, and interact via AI.</p>
         </div>
     </header>
 
     <main class="container">
-        <!-- SOLVER & GENERATOR SECTION -->
         <section class="card input-section" id="solverSection">
             <div class="tabs-wrapper">
                 <nav class="tabs" aria-label="Synthesis Input Options">
-                    <!-- NEW AI TAB Relocated -->
-                    <button class="tab" data-target="tab-ai">
-                        <span>🤖</span> AI Assistant
-                    </button>
-                    <button class="tab active" data-target="tab-expr">
-                        <span>⚡</span> Expression
-                    </button>
-                    <button class="tab" data-target="tab-minmax">
-                        <span>📊</span> Min/Max Terms
-                    </button>
-                    <button class="tab" data-target="tab-tt">
-                        <span>📋</span> Truth Table
-                    </button>
-                    <button class="tab" data-target="tab-arithmetic">
-                        <span>🧮</span> Arithmetic Circuits
-                    </button>
-                    <button class="tab" data-target="tab-rtl">
-                        <span>💻</span> AI RTL Generator
-                    </button>
+                    <button class="tab" data-target="tab-ai"><span>🤖</span> AI Assistant</button>
+                    <button class="tab active" data-target="tab-expr"><span>⚡</span> Expression</button>
+                    <button class="tab" data-target="tab-draw"><span>✏️</span> Draw Circuit</button>
+                    <button class="tab" data-target="tab-minmax"><span>📊</span> Min/Max Terms</button>
+                    <button class="tab" data-target="tab-tt"><span>📋</span> Truth Table</button>
+                    <button class="tab" data-target="tab-arithmetic"><span>🧮</span> Arithmetic Circuits</button>
+                    <button class="tab" data-target="tab-seg8"><span>💡</span> 8-Segment Display</button>
+                    <button class="tab" data-target="tab-rtl"><span>💻</span> AI RTL Generator</button>
                 </nav>
             </div>
 
-            <!-- TAB 0: AI Logic Assistant -->
+            <!-- TAB: AI Logic Assistant -->
             <div class="tab-content" id="tab-ai">
                 <h2 style="margin-bottom: 1rem;">🤖 AI Logic Assistant (Google Gemini)</h2>
                 <label for="prompt">Problem Statement / Expression Prompt</label>
@@ -482,7 +233,6 @@
                 <label style="margin-top: 1.25rem;">Expression Output</label>
                 <div id="responseOutput" class="code-font" style="min-height: 80px; width: 100%; white-space: pre-wrap; margin-top: 0.5rem; display: block;">Response will appear here...</div>
                 
-                <!-- Variable Mapping UI Block -->
                 <div id="variableMapping" style="margin-top: 1.25rem; display: none;"></div>
 
                 <div class="ai-divider"><span>Or Upload a Circuit Diagram</span></div>
@@ -501,14 +251,40 @@
                 <div id="imageResponseOutput" class="code-font" style="min-height: 80px; width: 100%; white-space: pre-wrap; margin-top: 0.5rem; display: block;">Upload a circuit image and click analyze to generate the Boolean expression...</div>
             </div>
 
-            <!-- TAB 1: Boolean Expression -->
+            <!-- TAB: Boolean Expression -->
             <div class="tab-content active" id="tab-expr">
                 <label for="inputExpr">Boolean Expression (Use &, |, ~, ^ for AND, OR, NOT, XOR):</label>
                 <input type="text" id="inputExpr" placeholder="e.g. A & B | ~C & D | E & ~F">
                 <button id="btnSynthesizeExpr" class="primary-btn synthesize-btn">Synthesize & Solve K-Map ⚡</button>
             </div>
 
-            <!-- TAB 2: Minterms / Maxterms -->
+            <!-- TAB: Draw Circuit -->
+            <div class="tab-content" id="tab-draw">
+                <h2 style="margin-bottom: 1rem;">✏️ Interactive Circuit Canvas</h2>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">Select a tool, click the canvas to place a gate, drag gates to move, and drag from a green output pin to a red input pin to wire them up. Synthesize once you're done!</p>
+                <div id="schematic-toolbar" style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+                    <button class="secondary-btn tool-btn active" data-tool="select" style="margin-bottom:0.5rem;">Select / Move</button>
+                    <button class="secondary-btn tool-btn" data-tool="wire" style="margin-bottom:0.5rem;">Wire Tool</button>
+                    <button class="secondary-btn tool-btn" data-tool="delete" style="margin-bottom:0.5rem;">Delete</button>
+                    <div style="width:1px; background:var(--border-color); margin: 0 0.5rem;"></div>
+                    <button class="secondary-btn tool-btn" data-tool="IN" style="margin-bottom:0.5rem; background:rgba(16, 185, 129, 0.2);">+ INPUT</button>
+                    <button class="secondary-btn tool-btn" data-tool="AND" style="margin-bottom:0.5rem;">AND</button>
+                    <button class="secondary-btn tool-btn" data-tool="OR" style="margin-bottom:0.5rem;">OR</button>
+                    <button class="secondary-btn tool-btn" data-tool="NOT" style="margin-bottom:0.5rem;">NOT</button>
+                    <button class="secondary-btn tool-btn" data-tool="NAND" style="margin-bottom:0.5rem;">NAND</button>
+                    <button class="secondary-btn tool-btn" data-tool="NOR" style="margin-bottom:0.5rem;">NOR</button>
+                    <button class="secondary-btn tool-btn" data-tool="XOR" style="margin-bottom:0.5rem;">XOR</button>
+                    <button class="secondary-btn tool-btn" data-tool="XNOR" style="margin-bottom:0.5rem;">XNOR</button>
+                    <button class="secondary-btn tool-btn" data-tool="XAND" style="margin-bottom:0.5rem;">XAND</button>
+                    <button class="secondary-btn tool-btn" data-tool="XNAND" style="margin-bottom:0.5rem;">XNAND</button>
+                </div>
+                <div style="position:relative; width:100%; height:500px; border:2px dashed var(--border-color); background:var(--bg-tt); border-radius:var(--radius-md); overflow:hidden; touch-action:none; cursor: crosshair;">
+                    <svg id="schematic-svg" width="100%" height="100%" style="user-select:none;"></svg>
+                </div>
+                <button id="btnSynthesizeDrawing" class="primary-btn" style="margin-top:1.5rem;">Synthesize Drawn Circuit ⚡</button>
+            </div>
+
+            <!-- TAB: Minterms / Maxterms -->
             <div class="tab-content" id="tab-minmax">
                 <label for="inputVarsMin">Variables (comma separated, 1-6 variables):</label>
                 <input type="text" id="inputVarsMin" placeholder="e.g. A, B, C, D, E, F">
@@ -526,7 +302,7 @@
                 <button id="btnSynthesizeMinMax" class="primary-btn synthesize-btn">Synthesize & Solve K-Map ⚡</button>
             </div>
 
-            <!-- TAB 3: Truth Table -->
+            <!-- TAB: Truth Table -->
             <div class="tab-content" id="tab-tt">
                 <label for="inputVarsTT">Variables (comma separated, 1-6 variables):</label>
                 <input type="text" id="inputVarsTT" placeholder="e.g. A, B, C, D, E, F">
@@ -535,65 +311,48 @@
                 <button id="btnSynthesizeTT" class="primary-btn synthesize-btn" style="display:none; margin-top:1.25rem;">Synthesize & Solve K-Map ⚡</button>
             </div>
 
-            <!-- TAB 4: Arithmetic Circuits -->
+            <!-- TAB: Arithmetic Circuits -->
             <div class="tab-content" id="tab-arithmetic">
-                <label for="selectArithmetic">Select Pre-Defined Arithmetic Circuit:</label>
+                <label for="selectArithmetic">Select Pre-Defined Arithmetic / Logic Circuit:</label>
                 <select id="selectArithmetic" class="styled-select">
                     <option value="ha">Half Adder</option>
                     <option value="fa">Full Adder</option>
                     <option value="hs">Half Subtractor</option>
                     <option value="fs">Full Subtractor</option>
                     <option value="mult2">2x2 Multiplier</option>
+                    <option value="mult3">3x3 Multiplier</option>
                     <option value="mux21">2x1 Multiplexer</option>
                     <option value="mux41">4x1 Multiplexer</option>
-                    <option value="mult3">3x3 Multiplier</option>
+                    <option value="demux12">1x2 Demultiplexer</option>
+                    <option value="demux14">1x4 Demultiplexer</option>
+                    <option value="enc42">4-to-2 Binary Encoder</option>
+                    <option value="prio42">4-to-2 Priority Encoder</option>
+                    <option value="dec24">2-to-4 Binary Decoder</option>
+                    <option value="dec38">3-to-8 Binary Decoder</option>
                 </select>
 
-                <!-- Live Interactive Calculator -->
                 <div id="interactiveCalc" style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: var(--radius-md);">
                     <h3 style="color: var(--accent-green); margin-bottom: 1rem;">🧮 Live Auto-Translator & Calculator</h3>
-                    
                     <div class="grid-2" style="gap: 1.5rem; margin-bottom: 1.5rem;">
-                        <!-- Input 1 -->
                         <div style="background: var(--bg-tt); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
                             <label id="lbl-calc-in1" style="color: var(--text-main); margin-bottom: 0.5rem; font-weight:700;">Input A</label>
                             <div style="display: flex; gap: 0.5rem;">
-                                <div style="flex: 1;">
-                                    <span style="font-size: 0.75rem; color: var(--text-dim);">Decimal</span>
-                                    <input type="number" id="calc-in1-dec" class="calc-input" value="0">
-                                </div>
-                                <div style="flex: 1;">
-                                    <span style="font-size: 0.75rem; color: var(--text-dim);">Binary</span>
-                                    <input type="text" id="calc-in1-bin" class="calc-input" value="0">
-                                </div>
+                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: var(--text-dim);">Decimal</span><input type="number" id="calc-in1-dec" class="calc-input" value="0"></div>
+                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: var(--text-dim);">Binary</span><input type="text" id="calc-in1-bin" class="calc-input" value="0"></div>
                             </div>
                         </div>
-                        <!-- Input 2 -->
-                        <div style="background: var(--bg-tt); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div id="calc-in2-box" style="background: var(--bg-tt); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
                             <label id="lbl-calc-in2" style="color: var(--text-main); margin-bottom: 0.5rem; font-weight:700;">Input B</label>
                             <div style="display: flex; gap: 0.5rem;">
-                                <div style="flex: 1;">
-                                    <span style="font-size: 0.75rem; color: var(--text-dim);">Decimal</span>
-                                    <input type="number" id="calc-in2-dec" class="calc-input" value="0">
-                                </div>
-                                <div style="flex: 1;">
-                                    <span style="font-size: 0.75rem; color: var(--text-dim);">Binary</span>
-                                    <input type="text" id="calc-in2-bin" class="calc-input" value="0">
-                                </div>
+                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: var(--text-dim);">Decimal</span><input type="number" id="calc-in2-dec" class="calc-input" value="0"></div>
+                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: var(--text-dim);">Binary</span><input type="text" id="calc-in2-bin" class="calc-input" value="0"></div>
                             </div>
                         </div>
-                        <!-- Input 3 -->
                         <div id="calc-in3-box" style="display: none; background: var(--bg-tt); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); grid-column: 1 / -1;">
-                            <label id="lbl-calc-in3" style="color: var(--text-main); margin-bottom: 0.5rem; font-weight:700;">Input C (Cin)</label>
+                            <label id="lbl-calc-in3" style="color: var(--text-main); margin-bottom: 0.5rem; font-weight:700;">Input C</label>
                             <div style="display: flex; gap: 0.5rem;">
-                                <div style="flex: 1;">
-                                    <span style="font-size: 0.75rem; color: var(--text-dim);">Decimal</span>
-                                    <input type="number" id="calc-in3-dec" class="calc-input" value="0">
-                                </div>
-                                <div style="flex: 1;">
-                                    <span style="font-size: 0.75rem; color: var(--text-dim);">Binary</span>
-                                    <input type="text" id="calc-in3-bin" class="calc-input" value="0">
-                                </div>
+                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: var(--text-dim);">Decimal</span><input type="number" id="calc-in3-dec" class="calc-input" value="0"></div>
+                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: var(--text-dim);">Binary</span><input type="text" id="calc-in3-bin" class="calc-input" value="0"></div>
                             </div>
                         </div>
                     </div>
@@ -601,35 +360,73 @@
                     <div style="background: rgba(16, 185, 129, 0.15); padding: 1rem; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.5);">
                         <label style="color: var(--accent-cyan); font-size: 1.1rem; margin-bottom: 0.75rem;">Combined Output Result</label>
                         <div style="display: flex; gap: 1.5rem;">
-                            <div style="flex: 1;">
-                                <span style="font-size: 0.75rem; color: var(--text-dim);">Decimal (Math Value)</span>
-                                <input type="text" id="calc-out-dec" readonly style="background: var(--bg-input); color: var(--text-main); font-weight: bold; font-size: 1.2rem; border-color: rgba(16, 185, 129, 0.5);">
-                            </div>
-                            <div style="flex: 1;">
-                                <span style="font-size: 0.75rem; color: var(--text-dim);">Binary (Circuit Pins)</span>
-                                <input type="text" id="calc-out-bin" readonly style="background: var(--bg-input); color: var(--accent-cyan); font-weight: bold; font-size: 1.2rem; border-color: rgba(16, 185, 129, 0.5); letter-spacing: 2px;">
-                            </div>
+                            <div style="flex: 1;"><span style="font-size: 0.75rem; color: var(--text-dim);">Decimal (Math Value)</span><input type="text" id="calc-out-dec" readonly style="background: var(--bg-input); color: var(--text-main); font-weight: bold; font-size: 1.2rem; border-color: rgba(16, 185, 129, 0.5);"></div>
+                            <div style="flex: 1;"><span style="font-size: 0.75rem; color: var(--text-dim);">Binary (Circuit Pins)</span><input type="text" id="calc-out-bin" readonly style="background: var(--bg-input); color: var(--accent-cyan); font-weight: bold; font-size: 1.2rem; border-color: rgba(16, 185, 129, 0.5); letter-spacing: 2px;"></div>
                         </div>
                     </div>
                 </div>
 
-                <button id="btnSynthesizeArithmetic" class="primary-btn synthesize-btn" style="margin-top: 1.5rem;">Generate Full Logic Pipeline AST ⚡</button>
+                <div class="synthesis-controls" style="display:flex; gap: 1rem; align-items:center; margin-top: 1.5rem; flex-wrap:wrap;">
+                    <div style="flex:1; min-width: 250px;">
+                        <label>Target Variable to Synthesize:</label>
+                        <select id="synthesisVarSelectArith" class="styled-select" style="margin-bottom:0;"><option value="all">All Variables</option></select>
+                    </div>
+                    <button id="btnSynthesizeArithmetic" class="primary-btn synthesize-btn" style="flex: 2; margin-top: 1.5rem; margin-bottom:0;">Generate Logic Pipeline ⚡</button>
+                </div>
             </div>
 
-            <!-- TAB 5: RTL Generation -->
+            <!-- TAB: 8-Segment Display -->
+            <div class="tab-content" id="tab-seg8">
+                <h2 style="margin-bottom: 1rem;">💡 8-Segment Display Decoder (a-g + DP)</h2>
+                <div class="seg8-display-wrapper">
+                    <svg width="150" height="210" viewBox="0 0 150 210" xmlns="http://www.w3.org/2000/svg">
+                        <polygon id="seg8-a" class="seg8-segment active" points="32,18 102,18 92,30 42,30" />
+                        <polygon id="seg8-b" class="seg8-segment active" points="104,21 104,85 92,77 92,31" />
+                        <polygon id="seg8-c" class="seg8-segment active" points="104,101 104,165 92,155 92,109" />
+                        <polygon id="seg8-d" class="seg8-segment active" points="32,168 102,168 92,156 42,156" />
+                        <polygon id="seg8-e" class="seg8-segment active" points="30,101 30,165 42,155 42,109" />
+                        <polygon id="seg8-f" class="seg8-segment active" points="30,21 30,85 42,31 42,77" />
+                        <polygon id="seg8-g" class="seg8-segment" points="33,93 42,86 92,86 101,93 92,100 42,100" />
+                        <circle id="seg8-dp" class="seg8-segment" cx="124" cy="168" r="8" />
+                    </svg>
+                </div>
+                <div class="grid-2" style="margin-bottom: 1.5rem;">
+                    <div style="background: var(--bg-tt); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                        <label for="seg8-bcd-dec" style="color:var(--text-main); font-weight:700;">Hex Digit (0-F / 0-15):</label>
+                        <input type="number" id="seg8-bcd-dec" class="calc-input" min="0" max="15" value="0">
+                        <label for="seg8-bcd-bin" style="color:var(--text-main); font-weight:700; margin-top:1rem;">Binary Input (D, C, B, A):</label>
+                        <input type="text" id="seg8-bcd-bin" class="calc-input" value="0000" maxlength="4">
+                        <div style="margin-top: 1.25rem; display: flex; align-items: center; gap: 0.75rem;">
+                            <input type="checkbox" id="seg8-dp-toggle" style="width:18px; height:18px; accent-color: var(--primary); cursor:pointer;">
+                            <label for="seg8-dp-toggle" style="margin:0; cursor:pointer; color:var(--text-main); font-weight:600;">Enable Decimal Point (DP)</label>
+                        </div>
+                    </div>
+                    <div style="background: var(--bg-tt); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); display:flex; flex-direction:column; justify-content:center;">
+                        <label style="color:var(--accent-cyan); font-weight:700; font-size:1.05rem;">Active Segment Bus (8-bit Word)</label>
+                        <span style="font-size:0.8rem; color:var(--text-dim); margin-bottom:0.5rem;">Bus: [a, b, c, d, e, f, g, dp]</span>
+                        <div id="seg8-bus-val" class="code-font" style="font-size:1.25rem; letter-spacing:3px; text-align:center; padding:1rem;">11111100</div>
+                    </div>
+                </div>
+                <div class="synthesis-controls" style="display:flex; gap: 1rem; align-items:center; margin-top: 1.5rem; flex-wrap:wrap;">
+                    <div style="flex:1; min-width: 250px;">
+                        <label>Target Segment Variable to Synthesize:</label>
+                        <select id="synthesisVarSelectSeg8" class="styled-select" style="margin-bottom:0;"><option value="all">All Variables</option></select>
+                    </div>
+                    <button id="btnSynthesizeSeg8" class="primary-btn synthesize-btn" style="flex: 2; margin-top: 1.5rem; margin-bottom:0;">Synthesize 8-Segment Display Logic ⚡</button>
+                </div>
+            </div>
+
+            <!-- TAB: RTL Generation -->
             <div class="tab-content" id="tab-rtl">
                 <label for="rtlPrompt">Problem Statement (RTL Description)</label>
                 <textarea id="rtlPrompt" placeholder="Describe the digital circuit you need code for (e.g. 'Create a 4-bit synchronous up counter with an asynchronous active-low reset and enable signal')..."></textarea>
-
                 <label for="rtlLang">Target HDL Language</label>
                 <select id="rtlLang" class="styled-select">
                     <option value="Verilog">Verilog</option>
                     <option value="SystemVerilog">SystemVerilog</option>
                     <option value="VHDL">VHDL</option>
                 </select>
-
                 <button id="btnGenerateRTL" class="primary-btn" style="margin-top: 1.25rem;">Generate RTL Code ⚡</button>
-
                 <label style="margin-top: 1.25rem;">RTL Output Code</label>
                 <div id="rtlOutput" class="code-font" style="min-height: 250px; width: 100%; white-space: pre-wrap; margin-top: 0.5rem; display: block; overflow-x: auto;">// Your generated code will appear here...</div>
             </div>
@@ -637,135 +434,95 @@
             <div id="errorMsg" class="error"></div>
         </section>
 
-        <!-- OUTPUT SECTION -->
+        <!-- GLOBAL SYNTHESIS SETTINGS -->
+        <div id="globalSettings" style="display:none; background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem; box-shadow: var(--shadow-card);">
+            <div style="display:flex; align-items:center; gap:1.5rem; justify-content:space-between; flex-wrap:wrap;">
+                <h4 style="margin:0; color:var(--text-main); display:flex; align-items:center; gap:0.5rem;"><span>⚙️</span> Universal Gate Settings</h4>
+                <div class="radio-group" style="margin:0; padding: 0.5rem 1rem; background: var(--bg-input);">
+                    <label><input type="radio" name="globalGateConstraint" value="2" checked> Strict 2-Input Gates (Cascaded)</label>
+                    <label><input type="radio" name="globalGateConstraint" value="multi"> Multi-Input Gates Allowed</label>
+                </div>
+            </div>
+        </div>
+
         <section id="outputs" style="display: none;"></section>
     </main>
 
     <button id="scrollTopBtn" title="Go to top">↑</button>
 
     <footer>
-        <div class="container">
-            <p>Nithin - Dhanush - Sai Krishna - Srikar - Sai Deepak - Harshith</p>
-        </div>
+        <div class="container"><p>Nithin - Dhanush - Sai Krishna - Srikar - Sai Deepak - Harshith</p></div>
     </footer>
 
     <script>
-    // Theme Toggle State
+    // -------------------------------------------------------------
+    // UI, Theme, & Background Animation
+    // -------------------------------------------------------------
     let isLightMode = false;
     const themeToggleBtn = document.getElementById('themeToggle');
-
     themeToggleBtn.addEventListener('click', () => {
         isLightMode = !isLightMode;
         document.body.classList.toggle('light-mode', isLightMode);
         themeToggleBtn.innerHTML = isLightMode ? '🌙 Dark Mode' : '☀️ Light Mode';
-        
-        // Re-render outputs if they exist so the SVGs update colors
         if(document.getElementById('outputs').style.display === 'block') {
             const activeTab = document.querySelector('.tab.active').dataset.target;
-            if(activeTab !== 'tab-rtl' && activeTab !== 'tab-ai') {
-                processInput();
-            }
+            if(activeTab !== 'tab-rtl' && activeTab !== 'tab-ai' && activeTab !== 'tab-draw') processInput();
         }
     });
 
-    // Magical Starry Background Animation Engine
     (function initMotionBackground() {
         const canvas = document.getElementById('bgCanvas');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
-
         let particles = [];
         const numParticles = 120;
-        const colorsDark = ['#ffffff', '#fef08a', '#a5b4fc', '#67e8f9']; // White, Gold, Soft Purple, Cyan
+        const colorsDark = ['#ffffff', '#fef08a', '#a5b4fc', '#67e8f9'];
         const colorsLight = ['#ffffff', '#fbbf24', '#818cf8', '#38bdf8']; 
 
         function initParticles() {
             particles = [];
             for (let i = 0; i < numParticles; i++) {
                 particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    radius: Math.random() * 2 + 0.5,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: Math.random() * -1 - 0.2, // drifting upwards
-                    baseAlpha: Math.random() * 0.5 + 0.3,
-                    pulse: Math.random() * Math.PI * 2,
-                    colorIdx: Math.floor(Math.random() * 4)
+                    x: Math.random() * width, y: Math.random() * height, radius: Math.random() * 2 + 0.5,
+                    vx: (Math.random() - 0.5) * 0.5, vy: Math.random() * -1 - 0.2, baseAlpha: Math.random() * 0.5 + 0.3,
+                    pulse: Math.random() * Math.PI * 2, colorIdx: Math.floor(Math.random() * 4)
                 });
             }
         }
-
-        window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            initParticles();
-        });
-
+        window.addEventListener('resize', () => { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; initParticles(); });
         initParticles();
 
         function renderFrame() {
-            // Draw Gradient Background
             let grad = ctx.createLinearGradient(0, 0, 0, height);
-            if (isLightMode) {
-                grad.addColorStop(0, '#e0f2fe'); // Soft sky blue top
-                grad.addColorStop(1, '#fdf4ff'); // Soft pinkish/white bottom
-            } else {
-                grad.addColorStop(0, '#0f172a'); // Deep slate blue
-                grad.addColorStop(0.5, '#1e1b4b'); // Deep indigo middle
-                grad.addColorStop(1, '#020617'); // Blackish blue bottom
-            }
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, width, height);
+            if (isLightMode) { grad.addColorStop(0, '#e0f2fe'); grad.addColorStop(1, '#fdf4ff'); } 
+            else { grad.addColorStop(0, '#0f172a'); grad.addColorStop(0.5, '#1e1b4b'); grad.addColorStop(1, '#020617'); }
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, width, height);
 
             const activeColors = isLightMode ? colorsLight : colorsDark;
-
-            // Draw Particles
             for (let i = 0; i < particles.length; i++) {
                 let p = particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                p.pulse += 0.02;
-
+                p.x += p.vx; p.y += p.vy; p.pulse += 0.02;
                 if (p.y < -10) p.y = height + 10;
                 if (p.x < -10) p.x = width + 10;
                 if (p.x > width + 10) p.x = -10;
 
                 let currentAlpha = p.baseAlpha + Math.sin(p.pulse) * 0.3;
-                if (currentAlpha < 0) currentAlpha = 0;
-                if (currentAlpha > 1) currentAlpha = 1;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                
-                // Magical glow effect
-                ctx.shadowBlur = isLightMode ? 6 : 12;
-                ctx.shadowColor = activeColors[p.colorIdx];
-                ctx.fillStyle = `rgba(${hexToRgb(activeColors[p.colorIdx])}, ${currentAlpha})`;
-                ctx.fill();
-                
-                // Reset shadow to not affect other things
-                ctx.shadowBlur = 0;
+                if (currentAlpha < 0) currentAlpha = 0; if (currentAlpha > 1) currentAlpha = 1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.shadowBlur = isLightMode ? 6 : 12; ctx.shadowColor = activeColors[p.colorIdx];
+                ctx.fillStyle = `rgba(${hexToRgb(activeColors[p.colorIdx])}, ${currentAlpha})`; ctx.fill(); ctx.shadowBlur = 0;
             }
             requestAnimationFrame(renderFrame);
         }
-
         function hexToRgb(hex) {
-            let r = 0, g = 0, b = 0;
-            if (hex.length == 7) {
-                r = parseInt(hex.slice(1, 3), 16);
-                g = parseInt(hex.slice(3, 5), 16);
-                b = parseInt(hex.slice(5, 7), 16);
-            }
+            let r=0, g=0, b=0;
+            if(hex.length===7){ r=parseInt(hex.slice(1,3),16); g=parseInt(hex.slice(3,5),16); b=parseInt(hex.slice(5,7),16); }
             return `${r}, ${g}, ${b}`;
         }
-
         renderFrame();
     })();
-
-    console.log("Advanced Logic Synthesizer & 6-Var K-Map Engine Loaded");
 
     function switchTabAndFocus(targetId) {
         const tabBtn = document.querySelector(`.tab[data-target="${targetId}"]`);
@@ -774,8 +531,10 @@
         if (section) section.scrollIntoView({ behavior: 'smooth' });
     }
 
+    // -------------------------------------------------------------
+    // General Event Listeners
+    // -------------------------------------------------------------
     document.addEventListener('DOMContentLoaded', () => {
-        // UI Tabs Switcher
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 const targetBtn = e.currentTarget;
@@ -784,30 +543,29 @@
                 targetBtn.classList.add('active');
                 document.getElementById(targetBtn.dataset.target).classList.add('active');
                 document.getElementById('outputs').style.display = 'none';
+                document.getElementById('globalSettings').style.display = 'none';
             });
         });
 
-        // Minterm / Maxterm Label Switch
         document.querySelectorAll('input[name="termType"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
-                document.getElementById('lblTerms').innerText = 
-                    e.target.value === 'minterms' ? 'Minterms (comma separated integers):' : 'Maxterms (comma separated integers):';
+                document.getElementById('lblTerms').innerText = e.target.value === 'minterms' ? 'Minterms (comma separated integers):' : 'Maxterms (comma separated integers):';
             });
         });
 
-        // Truth Table Input Generator
+        document.querySelectorAll('input[name="globalGateConstraint"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                if(document.getElementById('outputs').style.display === 'block') processInput();
+            });
+        });
+
         document.getElementById('btnGenerateTTInputs').addEventListener('click', () => {
             const varsStr = document.getElementById('inputVarsTT').value;
-            const vars = [...new Set(varsStr.toUpperCase().match(/[A-Z]/g) || [])].sort();
-            if (vars.length === 0 || vars.length > 6) {
-                alert("Please enter between 1 and 6 valid variables (A-Z).");
-                return;
-            }
-            
+            const vars = [...new Set(varsStr.toUpperCase().match(/[A-Z0-9]/g) || [])];
+            if (vars.length === 0 || vars.length > 6) { alert("Please enter between 1 and 6 valid variables."); return; }
             let html = '<div class="tt-container"><table><thead><tr>';
             vars.forEach(v => html += `<th>${v}</th>`);
             html += '<th>Output</th></tr></thead><tbody>';
-            
             const rows = Math.pow(2, vars.length);
             for(let i=0; i<rows; i++) {
                 html += '<tr>';
@@ -815,53 +573,54 @@
                     let val = (i & (1 << (vars.length - 1 - j))) ? 1 : 0;
                     html += `<td>${val}</td>`;
                 }
-                html += `<td><select id="tt-out-${i}" class="tt-select">
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="X">X</option>
-                </select></td></tr>`;
+                html += `<td><select id="tt-out-${i}" class="tt-select"><option value="0">0</option><option value="1">1</option><option value="X">X</option></select></td></tr>`;
             }
             html += '</tbody></table></div>';
-            
             const container = document.getElementById('ttInputContainer');
             container.innerHTML = html;
             container.dataset.vars = vars.join(',');
             document.getElementById('btnSynthesizeTT').style.display = 'block';
         });
 
-        // Synthesize Button Listeners
         document.querySelectorAll('.synthesize-btn').forEach(btn => {
             btn.addEventListener('click', processInput);
         });
 
-        // Scroll Top Button
         const scrollTopBtn = document.getElementById("scrollTopBtn");
         window.onscroll = () => { scrollTopBtn.style.display = window.scrollY > 300 ? "block" : "none"; };
         scrollTopBtn.onclick = () => { window.scrollTo({top: 0, behavior: 'smooth'}); };
 
-        // Gemini AI Logic - BOOLEAN EXPRESSION + MAPPING ENHANCED
+        // 8-Segment Input Handlers
+        document.getElementById('seg8-bcd-dec').addEventListener('input', (e) => {
+            let val = parseInt(e.target.value) || 0; val = Math.max(0, Math.min(15, val));
+            document.getElementById('seg8-bcd-bin').value = val.toString(2).padStart(4, '0');
+            updateSeg8UI();
+        });
+        document.getElementById('seg8-bcd-bin').addEventListener('input', (e) => {
+            let valStr = e.target.value.replace(/[^01]/g, '').slice(-4);
+            let val = parseInt(valStr, 2) || 0;
+            document.getElementById('seg8-bcd-dec').value = val;
+            updateSeg8UI();
+        });
+        document.getElementById('seg8-dp-toggle').addEventListener('change', updateSeg8UI);
+        updateSeg8UI();
+
+        // -------------------------------------------------------------
+        // Gemini AI Logic 
+        // -------------------------------------------------------------
         document.getElementById('submitBtn').addEventListener('click', async () => {
             const userPrompt = document.getElementById('prompt').value.trim();
             const output = document.getElementById('responseOutput');
             const exprInput = document.getElementById('inputExpr');
-
-            if (!userPrompt) {
-                output.textContent = 'Please enter a circuit description.';
-                return;
-            }
-
+            if (!userPrompt) { output.textContent = 'Please enter a circuit description.'; return; }
             output.textContent = 'Analyzing logic description & generating expression...';
 
             try {
                 const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: userPrompt })
                 });
-
                 const data = await response.json();
-                
-                // Gracefully display the error if token limit is hit
                 if (!response.ok) throw new Error(data.error || `HTTP Error ${response.status}`);
 
                 const cleanExpr = data.expression ? data.expression.trim() : '';
@@ -869,15 +628,12 @@
                 const chatMsg = data.chat_response;
 
                 if (!cleanExpr) throw new Error('Failed to parse expression from response.');
-
-                // Display the conversational chat response and the expression
                 output.innerHTML = `<div style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 0.5rem;">🤖 ${chatMsg}</div>Generated Expression: ${cleanExpr}`;
 
-                // Variable Mapping UI Block
                 const mapDiv = document.getElementById('variableMapping');
                 if (mapping && Object.keys(mapping).length > 0) {
                     let mapHtml = `<div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.4); padding: 1.25rem; border-radius: var(--radius-md);">
-                                      <h4 style="color: var(--accent-green); margin-bottom: 0.75rem; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;"><span>📌</span> Variable Mapping (A-F)</h4>
+                                      <h4 style="color: var(--accent-green); margin-bottom: 0.75rem; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;"><span>📌</span> Variable Mapping</h4>
                                       <ul style="list-style-type: none; padding-left: 0; margin: 0; font-size: 0.95rem; display: grid; gap: 0.5rem;">`;
                     for (const [key, value] of Object.entries(mapping)) {
                         mapHtml += `<li style="background: var(--bg-tt); padding: 0.5rem 1rem; border-radius: 6px; border-left: 4px solid var(--accent-green);">
@@ -887,61 +643,36 @@
                     mapHtml += `</ul></div>`;
                     mapDiv.innerHTML = mapHtml;
                     mapDiv.style.display = 'block';
-                } else {
-                    mapDiv.style.display = 'none';
-                }
+                } else { mapDiv.style.display = 'none'; }
 
                 if (exprInput) exprInput.value = cleanExpr;
                 switchTabAndFocus('tab-expr');
-                
                 const synthesizeBtn = document.getElementById('btnSynthesizeExpr');
                 if (synthesizeBtn) synthesizeBtn.click();
-
-            } catch (error) {
-                // Displays the friendly token limit error safely in the UI
-                output.textContent = '⚠️ ' + error.message;
-            }
+            } catch (error) { output.textContent = '⚠️ ' + error.message; }
         });
 
-        // Gemini AI Logic - RTL GENERATOR
         document.getElementById('btnGenerateRTL').addEventListener('click', async () => {
             const prompt = document.getElementById('rtlPrompt').value.trim();
             const lang = document.getElementById('rtlLang').value;
             const output = document.getElementById('rtlOutput');
-
-            if (!prompt) {
-                output.textContent = 'Please enter a circuit description to generate RTL.';
-                return;
-            }
-
+            if (!prompt) { output.textContent = 'Please enter a circuit description to generate RTL.'; return; }
             output.textContent = 'Analyzing problem statement and generating RTL code...';
 
             try {
                 const rtlSystemInstruction = `\n\nCRITICAL SYSTEM INSTRUCTION: Generate high-quality, production-ready ${lang} RTL code for the described digital circuit. Respond STRICTLY with a valid JSON object containing exactly ONE key named 'rtl_code'. The value must be the raw code string, properly formatted with newlines. Do NOT wrap the JSON in markdown blocks. Do NOT include markdown code blocks inside the 'rtl_code' string. Example: {"rtl_code": "module my_circuit(...);\\nendmodule"}`;
-                
                 const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: prompt + rtlSystemInstruction })
                 });
-
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || `HTTP Error ${response.status}`);
-
-                if (data.rtl_code) {
-                    output.textContent = data.rtl_code;
-                } else if (data.code) { // Fallback
-                    output.textContent = data.code;
-                } else {
-                    output.textContent = JSON.stringify(data, null, 2); 
-                }
-
-            } catch (error) {
-                output.textContent = 'Error: ' + error.message;
-            }
+                if (data.rtl_code) { output.textContent = data.rtl_code; } 
+                else if (data.code) { output.textContent = data.code; } 
+                else { output.textContent = JSON.stringify(data, null, 2); }
+            } catch (error) { output.textContent = 'Error: ' + error.message; }
         });
 
-        // Gemini AI Logic - CIRCUIT IMAGE ANALYSIS (routed through the same secure backend endpoint)
         let selectedCircuitImageFile = null;
         const circuitImageInput = document.getElementById('circuitImage');
         const imagePreviewWrap = document.getElementById('imagePreviewWrap');
@@ -955,30 +686,20 @@
             if (!file) return;
             selectedCircuitImageFile = file;
             const reader = new FileReader();
-            reader.onload = (e) => {
-                imagePreviewEl.src = e.target.result;
-                imagePreviewWrap.style.display = 'inline-block';
-            };
+            reader.onload = (e) => { imagePreviewEl.src = e.target.result; imagePreviewWrap.style.display = 'inline-block'; };
             reader.readAsDataURL(file);
             imageResponseOutput.textContent = 'Image loaded. Click "Analyze Circuit Image" to extract the Boolean expression...';
         });
 
         clearImageBtn.addEventListener('click', () => {
-            selectedCircuitImageFile = null;
-            circuitImageInput.value = '';
-            imagePreviewEl.src = '';
+            selectedCircuitImageFile = null; circuitImageInput.value = ''; imagePreviewEl.src = '';
             imagePreviewWrap.style.display = 'none';
             imageResponseOutput.textContent = 'Upload a circuit image and click analyze to generate the Boolean expression...';
         });
 
         analyzeImageBtn.addEventListener('click', async () => {
             const exprInput = document.getElementById('inputExpr');
-
-            if (!selectedCircuitImageFile) {
-                imageResponseOutput.textContent = 'Please upload an image of a logic circuit first.';
-                return;
-            }
-
+            if (!selectedCircuitImageFile) { imageResponseOutput.textContent = 'Please upload an image of a logic circuit first.'; return; }
             imageResponseOutput.textContent = 'Reading circuit diagram & identifying gates...';
             analyzeImageBtn.disabled = true;
 
@@ -989,144 +710,622 @@
                     reader.onerror = () => reject(new Error('Could not read the image file.'));
                     reader.readAsDataURL(selectedCircuitImageFile);
                 });
-
                 const mimeType = selectedCircuitImageFile.type || 'image/png';
+                const visionPrompt = `You are a digital logic circuit reader. Look at the attached image of a logic gate circuit (it may be hand-drawn, a textbook diagram, or a schematic tool export). Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires connect them, and the final output. Then derive the single Boolean expression for the circuit's output. If the image does not contain a readable logic circuit, set "expression" to the exact string UNREADABLE.`;
 
-                const visionPrompt = `You are a digital logic circuit reader. Look at the attached image of a logic gate circuit (it may be hand-drawn, a textbook diagram, or a schematic tool export).
-
-Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires connect them, and the final output. Then derive the single Boolean expression for the circuit's output. If the image does not contain a readable logic circuit, set "expression" to the exact string UNREADABLE.`;
-
-                // Sent to our own backend (/api/generate) which holds the Gemini API key server-side.
                 const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: visionPrompt, imageBase64: base64Data, mimeType })
                 });
-
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || `HTTP Error ${response.status}`);
 
                 const cleanExpr = data.expression ? data.expression.trim() : '';
-
                 if (!cleanExpr) throw new Error('Failed to parse an expression from the AI response.');
-
                 if (cleanExpr.toUpperCase() === 'UNREADABLE') {
-                    imageResponseOutput.textContent = 'The AI could not identify a clear logic circuit in this image. Try a clearer or higher-resolution photo/scan.';
-                    return;
+                    imageResponseOutput.textContent = 'The AI could not identify a clear logic circuit in this image. Try a clearer or higher-resolution photo/scan.'; return;
                 }
 
                 imageResponseOutput.innerHTML = `${data.chat_response ? `<div style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 0.5rem;">🤖 ${data.chat_response}</div>` : ''}Extracted Expression: ${cleanExpr}`;
-
                 if (exprInput) exprInput.value = cleanExpr;
                 switchTabAndFocus('tab-expr');
-
                 const synthesizeBtn = document.getElementById('btnSynthesizeExpr');
                 if (synthesizeBtn) synthesizeBtn.click();
-
-            } catch (error) {
-                imageResponseOutput.textContent = 'Error: ' + error.message;
-            } finally {
-                analyzeImageBtn.disabled = false;
-            }
+            } catch (error) { imageResponseOutput.textContent = 'Error: ' + error.message; } 
+            finally { analyzeImageBtn.disabled = false; }
         });
 
-        // Live Auto-Translator Calculator Setup
-        const calcConfig = {
-            'ha': { l1: 'A (1-bit)', b1: 1, l2: 'B (1-bit)', b2: 1, l3: null, b3: 0, outBits: 2 },
-            'fa': { l1: 'A (1-bit)', b1: 1, l2: 'B (1-bit)', b2: 1, l3: 'Cin (1-bit)', b3: 1, outBits: 2 },
-            'hs': { l1: 'A (1-bit)', b1: 1, l2: 'B (1-bit)', b2: 1, l3: null, b3: 0, outBits: 2 },
-            'fs': { l1: 'A (1-bit)', b1: 1, l2: 'B (1-bit)', b2: 1, l3: 'Bin (1-bit)', b3: 1, outBits: 2 },
-            'mult2': { l1: 'A (2-bit)', b1: 2, l2: 'B (2-bit)', b2: 2, l3: null, b3: 0, outBits: 4 },
-            'mult3': { l1: 'A (3-bit)', b1: 3, l2: 'B (3-bit)', b2: 3, l3: null, b3: 0, outBits: 6 },
-            'mux21': { l1: 'Data D (2-bit)', b1: 2, l2: 'Select S (1-bit)', b2: 1, l3: null, b3: 0, outBits: 1 },
-            'mux41': { l1: 'Data D (4-bit)', b1: 4, l2: 'Select S (2-bit)', b2: 2, l3: null, b3: 0, outBits: 1 }
+        initSchematicEditor();
+    });
+
+    // -------------------------------------------------------------
+    // Live Auto-Translator Calculator & Config Data Setup
+    // -------------------------------------------------------------
+    const calcConfig = {
+        'ha': { l1: 'A (1-bit)', b1: 1, l2: 'B (1-bit)', b2: 1, l3: null, b3: 0, outBits: 2 },
+        'fa': { l1: 'A (1-bit)', b1: 1, l2: 'B (1-bit)', b2: 1, l3: 'Cin (1-bit)', b3: 1, outBits: 2 },
+        'hs': { l1: 'A (1-bit)', b1: 1, l2: 'B (1-bit)', b2: 1, l3: null, b3: 0, outBits: 2 },
+        'fs': { l1: 'A (1-bit)', b1: 1, l2: 'B (1-bit)', b2: 1, l3: 'Bin (1-bit)', b3: 1, outBits: 2 },
+        'mult2': { l1: 'A (2-bit)', b1: 2, l2: 'B (2-bit)', b2: 2, l3: null, b3: 0, outBits: 4 },
+        'mult3': { l1: 'A (3-bit)', b1: 3, l2: 'B (3-bit)', b2: 3, l3: null, b3: 0, outBits: 6 },
+        'mux21': { l1: 'Data D (2-bit)', b1: 2, l2: 'Select S (1-bit)', b2: 1, l3: null, b3: 0, outBits: 1 },
+        'mux41': { l1: 'Data D (4-bit)', b1: 4, l2: 'Select S (2-bit)', b2: 2, l3: null, b3: 0, outBits: 1 },
+        'demux12': { l1: 'Data In (1-bit)', b1: 1, l2: 'Select S (1-bit)', b2: 1, l3: null, b3: 0, outBits: 2 },
+        'demux14': { l1: 'Data In (1-bit)', b1: 1, l2: 'Select S (2-bit)', b2: 2, l3: null, b3: 0, outBits: 4 },
+        'enc42': { l1: 'Active-High (1-hot, 4-bit)', b1: 4, l2: 'Unused (0)', b2: 1, l3: null, b3: 0, outBits: 2 },
+        'prio42': { l1: 'Request Input (4-bit)', b1: 4, l2: 'Unused (0)', b2: 1, l3: null, b3: 0, outBits: 3 },
+        'dec24': { l1: 'Select Address (2-bit)', b1: 2, l2: 'Enable EN (1-bit)', b2: 1, l3: null, b3: 0, outBits: 4 },
+        'dec38': { l1: 'Select Address (3-bit)', b1: 3, l2: 'Enable EN (1-bit)', b2: 1, l3: null, b3: 0, outBits: 8 }
+    };
+
+    const seg8Map = {
+        0: 0b1111110, 1: 0b0110000, 2: 0b1101101, 3: 0b1111001, 4: 0b0110011, 5: 0b1011011, 6: 0b1011111, 7: 0b1110000,
+        8: 0b1111111, 9: 0b1111011, 10: 0b1110111, 11: 0b0011111, 12: 0b1001110, 13: 0b0111101, 14: 0b1001111, 15: 0b1000111
+    };
+
+    function getSeg8Config() {
+        const vars = ['D', 'C', 'B', 'A'];
+        const segments = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+        let config = [];
+        segments.forEach((seg, sIdx) => {
+            let tt = [];
+            for (let i = 0; i < 16; i++) {
+                let pattern = seg8Map[i] || 0;
+                tt.push((pattern >> (6 - sIdx)) & 1);
+            }
+            config.push({ name: `Segment ${seg.toUpperCase()}`, vars: vars, tt: tt });
+        });
+        return config;
+    }
+
+    function getArithmeticConfig(type) {
+        let cnf = calcConfig[type];
+        let totalVars = (cnf.b1 || 0) + (cnf.b2 || 0) + (cnf.b3 || 0);
+        let vars = [];
+        for(let i = 0; i < totalVars; i++) vars.push(String.fromCharCode(65 + i));
+
+        let outCount = cnf.outBits;
+        let configs = [];
+        for(let o = 0; o < outCount; o++) {
+            configs.push({ name: `${type.toUpperCase()} Out Bit ${outCount - 1 - o}`, vars: vars, tt: [] });
+        }
+
+        for(let i = 0; i < Math.pow(2, totalVars); i++) {
+            let v1 = 0, v2 = 0, v3 = 0;
+            let shift = totalVars;
+            if(cnf.b1) { shift -= cnf.b1; v1 = (i >> shift) & ((1 << cnf.b1) - 1); }
+            if(cnf.b2) { shift -= cnf.b2; v2 = (i >> shift) & ((1 << cnf.b2) - 1); }
+            if(cnf.b3) { shift -= cnf.b3; v3 = (i >> shift) & ((1 << cnf.b3) - 1); }
+
+            let outBinVal = 0;
+            if(type === 'ha') outBinVal = v1 + v2;
+            else if(type === 'fa') outBinVal = v1 + v2 + v3;
+            else if(type === 'hs') { let diff = (v1 ^ v2) & 1; let bout = (v1 < v2) ? 1 : 0; outBinVal = (bout << 1) | diff; }
+            else if(type === 'fs') { let diff = (v1 ^ v2 ^ v3) & 1; let bout = ((~v1 & (v2 ^ v3)) | (v2 & v3)) & 1; outBinVal = (bout << 1) | diff; }
+            else if(type === 'mult2' || type === 'mult3') outBinVal = v1 * v2;
+            else if(type === 'mux21' || type === 'mux41') outBinVal = (v1 >> v2) & 1;
+            else if(type === 'demux12') { let y1 = (v2 === 1 && (v1 & 1)) ? 1 : 0; let y0 = (v2 === 0 && (v1 & 1)) ? 1 : 0; outBinVal = (y1 << 1) | y0; }
+            else if(type === 'demux14') outBinVal = (v1 & 1) ? (1 << v2) : 0;
+            else if(type === 'enc42') { if(v1 & 8) outBinVal = 3; else if(v1 & 4) outBinVal = 2; else if(v1 & 2) outBinVal = 1; else outBinVal = 0; }
+            else if(type === 'prio42') { let code = 0, valid = (v1 > 0) ? 1 : 0; if(v1 & 8) code = 3; else if(v1 & 4) code = 2; else if(v1 & 2) code = 1; else code = 0; outBinVal = (valid << 2) | code; }
+            else if(type === 'dec24' || type === 'dec38') outBinVal = (v2 & 1) ? (1 << v1) : 0;
+
+            for(let o = 0; o < outCount; o++) {
+                configs[o].tt.push((outBinVal >> (outCount - 1 - o)) & 1);
+            }
+        }
+        return configs;
+    }
+
+    // UPDATED SVG BLOCK DIAGRAM ENGINE
+    function renderBlockDiagram(type) {
+        let leftPins = [];
+        let rightPins = [];
+        let bottomPins = [];
+        let shape = 'rect';
+        
+        if (type === 'seg8') {
+            leftPins = ['D', 'C', 'B', 'A'];
+            rightPins = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'dp'];
+        } else {
+            let cfg = calcConfig[type];
+            if (type.startsWith('mux')) {
+                shape = 'mux';
+                for(let i=0; i<cfg.b1; i++) leftPins.push(`D${i}`);
+                for(let i=0; i<cfg.b2; i++) bottomPins.push(`S${i}`);
+                rightPins.push('Y');
+            } else if (type.startsWith('demux')) {
+                shape = 'demux';
+                leftPins.push('D');
+                for(let i=0; i<cfg.b2; i++) bottomPins.push(`S${i}`);
+                for(let i=0; i<cfg.outBits; i++) rightPins.push(`Y${i}`);
+            } else if (type === 'ha') {
+                leftPins = ['A', 'B']; rightPins = ['Sum', 'Carry'];
+            } else if (type === 'fa') {
+                leftPins = ['A', 'B', 'Cin']; rightPins = ['Sum', 'Cout'];
+            } else if (type === 'hs') {
+                leftPins = ['A', 'B']; rightPins = ['Diff', 'Bout'];
+            } else if (type === 'fs') {
+                leftPins = ['A', 'B', 'Bin']; rightPins = ['Diff', 'Bout'];
+            } else if (type === 'mult2') {
+                leftPins = ['A1', 'A0', 'B1', 'B0']; rightPins = ['P3', 'P2', 'P1', 'P0'];
+            } else if (type === 'mult3') {
+                leftPins = ['A[2:0]', 'B[2:0]']; rightPins = ['P[5:0]'];
+            } else if (type === 'enc42' || type === 'prio42') {
+                for(let i=0; i<4; i++) leftPins.push(`D${i}`);
+                rightPins = type === 'prio42' ? ['Y1', 'Y0', 'V'] : ['Y1', 'Y0'];
+            } else if (type === 'dec24' || type === 'dec38') {
+                for(let i=0; i<cfg.b1; i++) leftPins.push(`A${i}`);
+                bottomPins.push('EN');
+                for(let i=0; i<cfg.outBits; i++) rightPins.push(`Y${i}`);
+            }
+        }
+
+        let boxWidth = 180;
+        let pSpacing = 35;
+        let maxSide = Math.max(leftPins.length, rightPins.length);
+        let boxHeight = Math.max(120, (maxSide + 1) * pSpacing);
+        let svgH = boxHeight + 140;
+        let cx = 400, cy = svgH / 2;
+
+        let svg = `<svg viewBox="0 0 800 ${svgH}" width="100%" height="100%" style="max-height: ${svgH}px; font-family: 'Fira Code', monospace; user-select: none;">`;
+        
+        let pts = "";
+        let fill = "var(--bg-block)";
+        let stroke = "var(--accent-cyan)";
+        
+        if (shape === 'mux') {
+            pts = `${cx - boxWidth/2},${cy - boxHeight/2 - 20} ${cx + boxWidth/2},${cy - boxHeight/2 + 25} ${cx + boxWidth/2},${cy + boxHeight/2 - 25} ${cx - boxWidth/2},${cy + boxHeight/2 + 20}`;
+        } else if (shape === 'demux') {
+            pts = `${cx - boxWidth/2},${cy - boxHeight/2 + 25} ${cx + boxWidth/2},${cy - boxHeight/2 - 20} ${cx + boxWidth/2},${cy + boxHeight/2 + 20} ${cx - boxWidth/2},${cy + boxHeight/2 - 25}`;
+        } else {
+            pts = `${cx - boxWidth/2},${cy - boxHeight/2} ${cx + boxWidth/2},${cy - boxHeight/2} ${cx + boxWidth/2},${cy + boxHeight/2} ${cx - boxWidth/2},${cy + boxHeight/2}`;
+        }
+        
+        svg += `<polygon points="${pts}" fill="${fill}" stroke="${stroke}" stroke-width="3" rx="6" stroke-linejoin="round"/>`;
+        
+        let title = type === 'seg8' ? '8-Seg Decoder' : document.querySelector(`#selectArithmetic option[value="${type}"]`)?.innerText || type.toUpperCase();
+        svg += `<text x="${cx}" y="${cy}" fill="var(--text-main)" font-size="18" font-weight="bold" font-family="'Plus Jakarta Sans', sans-serif" text-anchor="middle" dominant-baseline="middle">${title}</text>`;
+
+        let drawPin = (x1, y1, x2, y2, label, anchor, isLeft, isBottom) => {
+            let line = `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--primary)" stroke-width="3"/>`;
+            if (isBottom) {
+                return line + `<text x="${x1}" y="${y1 + 25}" fill="var(--text-main)" font-size="14" font-weight="600" text-anchor="middle">${label}</text>`;
+            }
+            let textX = isLeft ? x1 - 10 : x2 + 10;
+            return line + `<text x="${textX}" y="${y1 + 5}" fill="var(--text-main)" font-size="14" font-weight="600" text-anchor="${anchor}">${label}</text>`;
         };
 
-        function initCalculator() {
-            const type = document.getElementById('selectArithmetic').value;
-            const cfg = calcConfig[type];
-
-            document.getElementById('lbl-calc-in1').innerText = cfg.l1;
-            document.getElementById('lbl-calc-in2').innerText = cfg.l2;
-            
-            if (cfg.l3) {
-                document.getElementById('calc-in3-box').style.display = 'block';
-                document.getElementById('lbl-calc-in3').innerText = cfg.l3;
-            } else {
-                document.getElementById('calc-in3-box').style.display = 'none';
-            }
-            
-            ['in1', 'in2', 'in3'].forEach((prefix, i) => {
-                let decEl = document.getElementById(`calc-${prefix}-dec`);
-                let binEl = document.getElementById(`calc-${prefix}-bin`);
-                decEl.value = 0;
-                binEl.value = '0'.padStart(i < 2 ? cfg[`b${i+1}`] : (cfg.l3 ? cfg.b3 : 1), '0');
-            });
-            updateCalcOutputs();
+        function getSideX(y, isLeft, shape) {
+            let baseLeft = cx - boxWidth/2;
+            let baseRight = cx + boxWidth/2;
+            if (shape === 'rect') return isLeft ? baseLeft : baseRight;
+            return isLeft ? baseLeft : baseRight; 
         }
 
-        function syncCalcInput(changedType, prefix, bits) {
-            let decEl = document.getElementById(`calc-${prefix}-dec`);
-            let binEl = document.getElementById(`calc-${prefix}-bin`);
-            let maxVal = (1 << bits) - 1;
+        let startYLeft = cy - ((leftPins.length - 1) * pSpacing) / 2;
+        leftPins.forEach((lbl, i) => {
+            let py = startYLeft + i * pSpacing;
+            let pxEnd = getSideX(py, true, shape);
+            let pxStart = pxEnd - 50;
+            svg += drawPin(pxStart, py, pxEnd, py, lbl, 'end', true, false);
+        });
 
-            if (changedType === 'dec') {
-                let val = parseInt(decEl.value) || 0;
-                if (val > maxVal) val = maxVal;
-                if (val < 0) val = 0;
-                decEl.value = val;
-                binEl.value = val.toString(2).padStart(bits, '0');
-            } else {
-                let valStr = binEl.value.replace(/[^01]/g, '').slice(-bits);
-                let val = parseInt(valStr, 2) || 0;
-                binEl.value = valStr.padStart(bits, '0');
-                decEl.value = val;
-            }
-            updateCalcOutputs();
-        }
+        let startYRight = cy - ((rightPins.length - 1) * pSpacing) / 2;
+        rightPins.forEach((lbl, i) => {
+            let py = startYRight + i * pSpacing;
+            let pxStart = getSideX(py, false, shape);
+            let pxEnd = pxStart + 50;
+            svg += drawPin(pxStart, py, pxEnd, py, lbl, 'start', false, false);
+        });
 
-        function updateCalcOutputs() {
-            let type = document.getElementById('selectArithmetic').value;
-            let cnf = calcConfig[type];
+        let startXBot = cx - ((bottomPins.length - 1) * pSpacing) / 2;
+        bottomPins.forEach((lbl, i) => {
+            let px = startXBot + i * pSpacing;
+            let baseL = cx - boxWidth/2;
+            let baseR = cx + boxWidth/2;
+            let yL = cy + boxHeight/2 + (shape === 'mux' ? 20 : (shape === 'demux' ? -25 : 0));
+            let yR = cy + boxHeight/2 - (shape === 'mux' ? 25 : (shape === 'demux' ? -20 : 0));
             
-            let v1 = parseInt(document.getElementById('calc-in1-dec').value) || 0;
-            let v2 = parseInt(document.getElementById('calc-in2-dec').value) || 0;
-            let v3 = cnf.l3 ? (parseInt(document.getElementById('calc-in3-dec').value) || 0) : 0;
+            let t = (px - baseL) / boxWidth;
+            let pyStart = yL + t * (yR - yL);
+            let pyEnd = pyStart + 50;
             
-            let outDec = 0, outBinVal = 0;
+            svg += drawPin(px, pyEnd, px, pyStart, lbl, 'middle', false, true);
+        });
 
-            if(type === 'ha') { outDec = v1 + v2; outBinVal = outDec; }
-            else if(type === 'fa') { outDec = v1 + v2 + v3; outBinVal = outDec; }
-            else if(type === 'hs') { 
-                outDec = v1 - v2; 
-                let bout = (v1 < v2) ? 1 : 0; let diff = (v1 ^ v2) & 1; outBinVal = (bout << 1) | diff; 
-            }
-            else if(type === 'fs') {
-                outDec = v1 - v2 - v3;
-                let diff = (v1 ^ v2 ^ v3) & 1; let bout = ((~v1 & (v2 ^ v3)) | (v2 & v3)) & 1; outBinVal = (bout << 1) | diff;
-            }
-            else if(type === 'mult2' || type === 'mult3') { outDec = v1 * v2; outBinVal = outDec; }
-            else if(type === 'mux21' || type === 'mux41') { outBinVal = (v1 >> v2) & 1; outDec = outBinVal; }
+        svg += `</svg>`;
+        let div = document.createElement('div');
+        div.className = 'block-diagram-container';
+        div.style.background = 'var(--bg-tt)';
+        div.style.padding = '2.5rem';
+        div.style.borderRadius = 'var(--radius-md)';
+        div.style.border = '1px solid var(--border-color)';
+        div.style.marginBottom = '2rem';
+        div.style.display = 'flex';
+        div.style.justifyContent = 'center';
+        div.innerHTML = svg;
+        return div;
+    }
 
-            document.getElementById('calc-out-dec').value = outDec;
-            document.getElementById('calc-out-bin').value = outBinVal.toString(2).padStart(cnf.outBits, '0');
-        }
-
-        document.getElementById('selectArithmetic').addEventListener('change', initCalculator);
+    function updateSeg8UI() {
+        let decVal = parseInt(document.getElementById('seg8-bcd-dec').value) || 0;
+        decVal = Math.max(0, Math.min(15, decVal));
+        const dpVal = document.getElementById('seg8-dp-toggle').checked ? 1 : 0;
+        const pattern = seg8Map[decVal] || 0;
         
-        ['in1', 'in2', 'in3'].forEach((prefix, i) => {
-            document.getElementById(`calc-${prefix}-dec`).addEventListener('input', () => {
-                const type = document.getElementById('selectArithmetic').value;
-                syncCalcInput('dec', prefix, calcConfig[type][`b${i+1}`] || 1);
-            });
-            document.getElementById(`calc-${prefix}-bin`).addEventListener('input', () => {
-                const type = document.getElementById('selectArithmetic').value;
-                syncCalcInput('bin', prefix, calcConfig[type][`b${i+1}`] || 1);
-            });
+        const segs = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+        let busString = '';
+        segs.forEach((s, idx) => {
+            const bitOn = (pattern >> (6 - idx)) & 1;
+            busString += bitOn;
+            const el = document.getElementById(`seg8-${s}`);
+            if (el) el.classList.toggle('active', bitOn === 1);
         });
         
-        initCalculator();
+        busString += dpVal;
+        const dpEl = document.getElementById('seg8-dp');
+        if (dpEl) dpEl.classList.toggle('active', dpVal === 1);
+        document.getElementById('seg8-bus-val').innerText = busString;
+    }
+
+    function updateVarSelect(type, selectElId) {
+        let selectEl = document.getElementById(selectElId);
+        if(!selectEl) return;
+        selectEl.innerHTML = '<option value="all">All Variables</option>';
+        let config = type === 'seg8' ? getSeg8Config() : getArithmeticConfig(type);
+        config.forEach((c, idx) => {
+            let opt = document.createElement('option');
+            opt.value = idx; opt.innerText = c.name;
+            selectEl.appendChild(opt);
+        });
+    }
+
+    function initCalculator() {
+        const type = document.getElementById('selectArithmetic').value;
+        const cfg = calcConfig[type];
+
+        document.getElementById('lbl-calc-in1').innerText = cfg.l1;
+        const in2Box = document.getElementById('calc-in2-box');
+        if (cfg.l2) { in2Box.style.display = 'block'; document.getElementById('lbl-calc-in2').innerText = cfg.l2; } 
+        else { in2Box.style.display = 'none'; }
+        
+        if (cfg.l3) { document.getElementById('calc-in3-box').style.display = 'block'; document.getElementById('lbl-calc-in3').innerText = cfg.l3; } 
+        else { document.getElementById('calc-in3-box').style.display = 'none'; }
+        
+        ['in1', 'in2', 'in3'].forEach((prefix, i) => {
+            let decEl = document.getElementById(`calc-${prefix}-dec`);
+            let binEl = document.getElementById(`calc-${prefix}-bin`);
+            let initialVal = (type.startsWith('dec') && prefix === 'in2') ? 1 : 0;
+            decEl.value = initialVal;
+            binEl.value = initialVal.toString(2).padStart(i < 2 ? (cfg[`b${i+1}`] || 1) : (cfg.l3 ? cfg.b3 : 1), '0');
+        });
+        updateCalcOutputs();
+    }
+
+    function syncCalcInput(changedType, prefix, bits) {
+        let decEl = document.getElementById(`calc-${prefix}-dec`);
+        let binEl = document.getElementById(`calc-${prefix}-bin`);
+        let maxVal = (1 << bits) - 1;
+        if (changedType === 'dec') {
+            let val = parseInt(decEl.value) || 0;
+            if (val > maxVal) val = maxVal; if (val < 0) val = 0;
+            decEl.value = val; binEl.value = val.toString(2).padStart(bits, '0');
+        } else {
+            let valStr = binEl.value.replace(/[^01]/g, '').slice(-bits);
+            let val = parseInt(valStr, 2) || 0;
+            binEl.value = valStr.padStart(bits, '0'); decEl.value = val;
+        }
+        updateCalcOutputs();
+    }
+
+    function updateCalcOutputs() {
+        let type = document.getElementById('selectArithmetic').value;
+        let cnf = calcConfig[type];
+        let v1 = parseInt(document.getElementById('calc-in1-dec').value) || 0;
+        let v2 = parseInt(document.getElementById('calc-in2-dec').value) || 0;
+        let v3 = cnf.l3 ? (parseInt(document.getElementById('calc-in3-dec').value) || 0) : 0;
+        let outDec = 0, outBinVal = 0;
+
+        if(type === 'ha') { outDec = v1 + v2; outBinVal = outDec; }
+        else if(type === 'fa') { outDec = v1 + v2 + v3; outBinVal = outDec; }
+        else if(type === 'hs') { outDec = v1 - v2; let bout = (v1 < v2) ? 1 : 0; let diff = (v1 ^ v2) & 1; outBinVal = (bout << 1) | diff; }
+        else if(type === 'fs') { outDec = v1 - v2 - v3; let diff = (v1 ^ v2 ^ v3) & 1; let bout = ((~v1 & (v2 ^ v3)) | (v2 & v3)) & 1; outBinVal = (bout << 1) | diff; }
+        else if(type === 'mult2' || type === 'mult3') { outDec = v1 * v2; outBinVal = outDec; }
+        else if(type === 'mux21' || type === 'mux41') { outBinVal = (v1 >> v2) & 1; outDec = outBinVal; }
+        else if(type === 'demux12') { let y1 = (v2 === 1 && (v1 & 1)) ? 1 : 0; let y0 = (v2 === 0 && (v1 & 1)) ? 1 : 0; outBinVal = (y1 << 1) | y0; outDec = outBinVal; }
+        else if(type === 'demux14') { outBinVal = (v1 & 1) ? (1 << v2) : 0; outDec = outBinVal; }
+        else if(type === 'enc42') { if(v1 & 8) outBinVal = 3; else if(v1 & 4) outBinVal = 2; else if(v1 & 2) outBinVal = 1; else outBinVal = 0; outDec = outBinVal; }
+        else if(type === 'prio42') { let code = 0, valid = (v1 > 0) ? 1 : 0; if(v1 & 8) code = 3; else if(v1 & 4) code = 2; else if(v1 & 2) code = 1; else code = 0; outBinVal = (valid << 2) | code; outDec = outBinVal; }
+        else if(type === 'dec24' || type === 'dec38') { outBinVal = (v2 & 1) ? (1 << v1) : 0; outDec = outBinVal; }
+
+        document.getElementById('calc-out-dec').value = outDec;
+        document.getElementById('calc-out-bin').value = outBinVal.toString(2).padStart(cnf.outBits, '0');
+    }
+
+    document.getElementById('selectArithmetic').addEventListener('change', (e) => {
+        initCalculator(); updateVarSelect(e.target.value, 'synthesisVarSelectArith');
     });
+    
+    // -------------------------------------------------------------
+    // SCHEMATIC DRAWING ENGINE (Robust SVG Rewrite)
+    // -------------------------------------------------------------
+    let schNodes = [];
+    let schWires = [];
+    let schId = 1;
+
+    function initSchematicEditor() {
+        let currentTool = 'select';
+        let dragNode = null;
+        let wireStartPin = null;
+        let tempWire = null;
+        const svg = document.getElementById('schematic-svg');
+
+        function getMousePos(e) {
+            let rect = svg.getBoundingClientRect();
+            return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        }
+
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTool = btn.dataset.tool;
+            });
+        });
+
+        svg.addEventListener('mousedown', (e) => {
+            let target = e.target;
+            let pos = getMousePos(e);
+            
+            if(['IN', 'AND', 'OR', 'NOT', 'NAND', 'NOR', 'XOR', 'XNOR', 'XAND', 'XNAND'].includes(currentTool)) {
+                let label = currentTool === 'IN' ? prompt("Enter variable name (A-Z):", "A") : currentTool;
+                if(currentTool === 'IN' && (!label || label.trim()==='')) return;
+                let n = { id: schId++, type: currentTool, x: pos.x, y: pos.y, label: label ? label.toUpperCase().replace(/[^A-Z0-9]/g,'') : '' };
+                schNodes.push(n);
+                renderSchematic();
+                return;
+            }
+
+            if (currentTool === 'delete') {
+                let nodeG = target.closest('g[data-id]');
+                if(nodeG) {
+                    let id = parseInt(nodeG.dataset.id);
+                    schNodes = schNodes.filter(n => n.id !== id);
+                    schWires = schWires.filter(w => w.from !== id && w.to !== id);
+                    renderSchematic();
+                }
+                return;
+            }
+
+            if (currentTool === 'wire') {
+                if (target.classList.contains('out-pin')) {
+                    wireStartPin = parseInt(target.dataset.node);
+                    tempWire = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    tempWire.setAttribute('fill', 'none');
+                    tempWire.setAttribute('stroke', '#a1a1aa');
+                    tempWire.setAttribute('stroke-width', '3');
+                    svg.appendChild(tempWire);
+                }
+                return;
+            }
+
+            if (currentTool === 'select') {
+                let nodeG = target.closest('g[data-id]');
+                if(nodeG) dragNode = schNodes.find(n => n.id === parseInt(nodeG.dataset.id));
+            }
+        });
+
+        svg.addEventListener('mousemove', (e) => {
+            let pos = getMousePos(e);
+            if(dragNode) { dragNode.x = pos.x; dragNode.y = pos.y; renderSchematic(); }
+            if(tempWire && wireStartPin) {
+                let n1 = schNodes.find(n => n.id === wireStartPin);
+                let x1 = n1.x + 30, y1 = n1.y;
+                tempWire.setAttribute('d', `M ${x1},${y1} C ${x1+40},${y1} ${pos.x-40},${pos.y} ${pos.x},${pos.y}`);
+            }
+        });
+
+        svg.addEventListener('mouseup', (e) => {
+            if(tempWire && wireStartPin) {
+                let target = e.target;
+                if(target.classList.contains('in-pin')) {
+                    let toNode = parseInt(target.dataset.node);
+                    let toPin = parseInt(target.dataset.pin);
+                    if(toNode !== wireStartPin) {
+                        schWires = schWires.filter(w => !(w.to === toNode && w.toPin === toPin));
+                        schWires.push({from: wireStartPin, to: toNode, toPin: toPin});
+                    }
+                }
+                wireStartPin = null;
+                if(tempWire && tempWire.parentNode) tempWire.parentNode.removeChild(tempWire);
+                tempWire = null;
+                renderSchematic();
+            }
+            dragNode = null;
+        });
+
+        document.getElementById('btnSynthesizeDrawing').addEventListener('click', () => {
+            let endpoints = schNodes.filter(n => !schWires.some(w => w.from === n.id));
+            if(endpoints.length === 0) { alert("Circuit is empty or has loops with no output point."); return; }
+            let exp = traceExpression(endpoints[0].id);
+            if(!exp || exp === '0') { alert("Output not connected to any valid inputs."); return; }
+            document.getElementById('inputExpr').value = exp;
+            switchTabAndFocus('tab-expr');
+            document.getElementById('btnSynthesizeExpr').click();
+        });
+    }
+
+    function renderSchematic() {
+        const svg = document.getElementById('schematic-svg');
+        let content = '';
+        
+        schWires.forEach(w => {
+            let n1 = schNodes.find(n => n.id === w.from);
+            let n2 = schNodes.find(n => n.id === w.to);
+            if(n1 && n2) {
+                let x1 = n1.x + 30, y1 = n1.y;
+                let x2 = n2.x - 30, y2 = n2.y - 10 + (w.toPin * 20);
+                if(n2.type === 'NOT' || n2.type === 'IN') y2 = n2.y;
+                content += `<path d="M ${x1},${y1} C ${x1+40},${y1} ${x2-40},${y2} ${x2},${y2}" fill="none" stroke="var(--primary)" stroke-width="3"/>`;
+            }
+        });
+        
+        schNodes.forEach(n => {
+            content += `<g transform="translate(${n.x}, ${n.y})" data-id="${n.id}" style="cursor:pointer;">`;
+            content += `<rect x="-30" y="-20" width="60" height="40" rx="4" fill="var(--bg-block)" stroke="var(--border-highlight)" stroke-width="2"/>`;
+            content += `<text x="0" y="5" text-anchor="middle" fill="var(--text-main)" font-size="12" font-family="'Fira Code', monospace" pointer-events="none">${n.type==='IN'? n.label : n.type}</text>`;
+            if(n.type !== 'IN') {
+                if(n.type === 'NOT') {
+                    content += `<circle class="pin in-pin" data-node="${n.id}" data-pin="0" cx="-30" cy="0" r="6" fill="#f43f5e" stroke="#1e293b" stroke-width="2"/>`;
+                } else {
+                    content += `<circle class="pin in-pin" data-node="${n.id}" data-pin="0" cx="-30" cy="-10" r="6" fill="#f43f5e" stroke="#1e293b" stroke-width="2"/>`;
+                    content += `<circle class="pin in-pin" data-node="${n.id}" data-pin="1" cx="-30" cy="10" r="6" fill="#f43f5e" stroke="#1e293b" stroke-width="2"/>`;
+                }
+            }
+            content += `<circle class="pin out-pin" data-node="${n.id}" cx="30" cy="0" r="6" fill="#10b981" stroke="#1e293b" stroke-width="2"/>`;
+            content += `</g>`;
+        });
+        svg.innerHTML = content;
+    }
+
+    function traceExpression(nodeId) {
+        let node = schNodes.find(n => n.id === nodeId);
+        if(!node) return '0';
+        if (node.type === 'IN') return node.label;
+        
+        let exprs = [];
+        let inCount = node.type === 'NOT' ? 1 : 2;
+        for(let i=0; i<inCount; i++) {
+            let w = schWires.find(w => w.to === nodeId && w.toPin === i);
+            if(w) exprs.push(traceExpression(w.from));
+            else exprs.push('0');
+        }
+        
+        if(node.type === 'NOT') return `~(${exprs[0]})`;
+        
+        let op = '&';
+        if(node.type === 'OR' || node.type === 'NOR') op = '|';
+        if(node.type === 'XOR' || node.type === 'XNOR' || node.type === 'XAND' || node.type === 'XNAND') op = '^';
+        
+        let exp = `(${exprs[0]} ${op} ${exprs[1]})`;
+        if(['NAND', 'NOR', 'XNOR', 'XAND'].includes(node.type)) exp = `~${exp}`; 
+        
+        return exp;
+    }
+
+    // -------------------------------------------------------------
+    // NODE REUSE DAG BUILDER ENGINE & SYNTHESIS
+    // -------------------------------------------------------------
+    let globalDagCache = {};
+    let globalDagId = 0;
+    function resetDag() { globalDagCache = {}; globalDagId = 0; }
+
+    function getDagNode(type, val, children) {
+        let cIds = children ? children.map(c => c.id) : [];
+        if (['AND', 'OR', 'NAND', 'NOR'].includes(type)) { cIds.sort((a, b) => a - b); }
+        if (['AND', 'OR'].includes(type)) {
+            cIds = [...new Set(cIds)];
+            if (cIds.length === 1) return children.find(c => c.id === cIds[0]);
+        }
+        let hash = `${type}:${val !== null ? val : ''}:${cIds.join(',')}`;
+        if (globalDagCache[hash]) return globalDagCache[hash];
+        let finalChildren = children ? cIds.map(id => children.find(c => c.id === id)) : null;
+        let node = { id: globalDagId++, type, value: val, children: finalChildren };
+        globalDagCache[hash] = node;
+        return node;
+    }
+
+    function buildGate(type, children, limit2) {
+        if (!children || children.length === 0) return null;
+        if (children.length === 1 && type !== 'NOT') return children[0];
+        if (limit2 && children.length > 2) {
+            let current = children[0];
+            for (let i = 1; i < children.length; i++) {
+                current = getDagNode(type, null, [current, children[i]]);
+            }
+            return current;
+        }
+        return getDagNode(type, null, children);
+    }
+
+    function literalToNode(lit) {
+        if (lit.startsWith('~')) { return getDagNode('NOT', null, [getDagNode('VAR', lit.substring(1), null)]); }
+        return getDagNode('VAR', lit, null);
+    }
+
+    window.liveSimState = {};
+    window.liveSimRegistry = {};
+
+    window.togglePinSim = function(uniqueId, varName) {
+        if (!window.liveSimState[uniqueId]) window.liveSimState[uniqueId] = {};
+        window.liveSimState[uniqueId][varName] = window.liveSimState[uniqueId][varName] ? 0 : 1;
+        updateLiveSimulation(uniqueId);
+    };
+
+    function updateLiveSimulation(uniqueId) {
+        const simData = window.liveSimRegistry[uniqueId];
+        if (!simData) return;
+        const inputs = window.liveSimState[uniqueId] || {};
+
+        function simEvalNode(n) {
+            if (!n) return 0;
+            if (n.simCache !== undefined) return n.simCache;
+            let val = 0;
+            if (n.type === 'CONST') val = n.value;
+            else if (n.type === 'VAR') val = inputs[n.value] !== undefined ? inputs[n.value] : 0;
+            else if (n.type === 'NOT') val = simEvalNode(n.children[0]) ? 0 : 1;
+            else if (n.type === 'AND') val = n.children.every(c => simEvalNode(c) === 1) ? 1 : 0;
+            else if (n.type === 'OR') val = n.children.some(c => simEvalNode(c) === 1) ? 1 : 0;
+            else if (n.type === 'NAND') val = n.children.every(c => simEvalNode(c) === 1) ? 0 : 1;
+            else if (n.type === 'NOR') val = n.children.some(c => simEvalNode(c) === 1) ? 0 : 1;
+            n.simCache = val; return val;
+        }
+
+        ['std', 'nand', 'nor'].forEach(circuitType => {
+            const ast = simData[circuitType];
+            if (!ast) return;
+            const container = document.getElementById(`svg-${uniqueId}-${circuitType}`);
+            if (!container) return;
+
+            let all = new Set();
+            function collect(n) { if(!n || all.has(n)) return; all.add(n); if(n.children) n.children.forEach(collect); }
+            collect(ast);
+            all.forEach(n => delete n.simCache);
+
+            simData.vars.forEach(v => {
+                const val = inputs[v] || 0;
+                container.querySelectorAll(`.input-val-${v}`).forEach(el => {
+                    el.textContent = val; el.setAttribute('fill', val ? 'var(--accent-green)' : 'var(--accent-rose)');
+                });
+                container.querySelectorAll(`.input-box-${v}`).forEach(el => {
+                    el.setAttribute('stroke', val ? 'var(--accent-green)' : 'var(--border-color)');
+                });
+            });
+
+            function updateWiresAndGates(n) {
+                if (!n || n.uiUpdated) return;
+                n.uiUpdated = true;
+                const nodeVal = simEvalNode(n);
+                const wireColor = nodeVal ? 'var(--wire-on)' : 'var(--wire-off)';
+                
+                container.querySelectorAll(`.wire-from-${n.id}`).forEach(w => {
+                    w.setAttribute('stroke', wireColor); w.setAttribute('stroke-width', nodeVal ? '2.5' : '1.5');
+                });
+                if (n.children) n.children.forEach(updateWiresAndGates);
+            }
+
+            updateWiresAndGates(ast);
+            all.forEach(n => delete n.uiUpdated);
+            
+            const outVal = simEvalNode(ast);
+            const outEl = container.querySelector('.circuit-out-text');
+            if (outEl) {
+                outEl.textContent = `Out = ${outVal}`;
+                outEl.setAttribute('fill', outVal ? 'var(--accent-green)' : 'var(--accent-rose)');
+            }
+        });
+    }
 
     function processInput() {
         const errorMsg = document.getElementById('errorMsg');
@@ -1134,6 +1333,8 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
         errorMsg.innerText = '';
         outputs.innerHTML = '';
         outputs.style.display = 'none';
+        
+        document.getElementById('globalSettings').style.display = 'block';
 
         try {
             const activeTab = document.querySelector('.tab.active').dataset.target;
@@ -1143,7 +1344,7 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
                 const expr = document.getElementById('inputExpr').value;
                 if(!expr.trim()) throw new Error("Expression cannot be empty.");
                 
-                let allVars = expr.toUpperCase().match(/[A-Z]/g) || [];
+                let allVars = expr.toUpperCase().match(/[A-Z0-9]/g) || [];
                 const vars = [...new Set(allVars)].sort();
                 if(vars.length > 6) throw new Error("Maximum 6 variables supported for logic synthesis.");
                 if(vars.length === 0) throw new Error("No valid variables found.");
@@ -1152,16 +1353,14 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
                 const rows = Math.pow(2, vars.length);
                 for (let i = 0; i < rows; i++) {
                     let inputVals = {};
-                    for (let j = 0; j < vars.length; j++) {
-                        inputVals[vars[j]] = (i & (1 << (vars.length - 1 - j))) ? 1 : 0;
-                    }
+                    for (let j = 0; j < vars.length; j++) { inputVals[vars[j]] = (i & (1 << (vars.length - 1 - j))) ? 1 : 0; }
                     tt.push(evaluateExpression(expr, inputVals));
                 }
                 synthesisQueue.push({ name: 'Boolean Function', vars: vars, tt: tt });
             } 
             else if (activeTab === 'tab-minmax') {
                 const varsStr = document.getElementById('inputVarsMin').value;
-                const vars = [...new Set(varsStr.toUpperCase().match(/[A-Z]/g) || [])].sort();
+                const vars = [...new Set(varsStr.toUpperCase().match(/[A-Z0-9]/g) || [])];
                 if(vars.length === 0 || vars.length > 6) throw new Error("Enter 1 to 6 valid variables.");
                 
                 const isMinterm = document.querySelector('input[name="termType"]:checked').value === 'minterms';
@@ -1194,15 +1393,28 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
             }
             else if (activeTab === 'tab-arithmetic') {
                 const type = document.getElementById('selectArithmetic').value;
-                synthesisQueue = getArithmeticConfig(type);
+                const selIdx = document.getElementById('synthesisVarSelectArith').value;
+                let fullConfig = getArithmeticConfig(type);
+                if (selIdx !== 'all') { synthesisQueue = [fullConfig[parseInt(selIdx)]]; } 
+                else { synthesisQueue = fullConfig; }
                 outputs.appendChild(renderBlockDiagram(type));
             }
+            else if (activeTab === 'tab-seg8') {
+                let fullConfig = getSeg8Config();
+                const selIdx = document.getElementById('synthesisVarSelectSeg8').value;
+                if (selIdx !== 'all') { synthesisQueue = [fullConfig[parseInt(selIdx)]]; } 
+                else { synthesisQueue = fullConfig; }
+                outputs.appendChild(renderBlockDiagram('seg8'));
+            }
+
+            window.liveSimRegistry = {};
+            const limit2 = document.querySelector('input[name="globalGateConstraint"]:checked').value === '2';
 
             synthesisQueue.forEach((job, index) => {
                 const section = document.createElement('div');
                 section.className = 'multi-output-section';
                 section.innerHTML = `<h2 class="output-header">⚙️ Synthesizing: ${job.name} (${job.vars.length} Variables)</h2>`;
-                section.innerHTML += runSynthesis(job.vars, job.tt, index);
+                section.innerHTML += runSynthesis(job.vars, job.tt, index, limit2);
                 outputs.appendChild(section);
             });
 
@@ -1215,58 +1427,37 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
     }
 
     function evaluateExpression(expr, inputs) {
-        // 1. Replace word operators safely (case-insensitive, matching whole words only)
-        let norm = expr.replace(/\bAND\b/gi, '&')
-                       .replace(/\bOR\b/gi, '|')
-                       .replace(/\bNOT\b/gi, '~')
-                       .replace(/\bXOR\b/gi, '^');
-        
-        // 2. Map standard math/programming symbols to our logic engine symbols
-        norm = norm.replace(/\*/g, '&')
-                   .replace(/\+/g, '|')
-                   .replace(/!/g, '~');
-                   
-        // 3. Remove all spaces and uppercase variables
+        let norm = expr.replace(/\bAND\b/gi, '&').replace(/\bOR\b/gi, '|').replace(/\bNOT\b/gi, '~').replace(/\bXOR\b/gi, '^');
+        norm = norm.replace(/\*/g, '&').replace(/\+/g, '|').replace(/!/g, '~');
         norm = norm.replace(/\s+/g, '').toUpperCase();
+        norm = norm.replace(/([A-Z0-9\)])(?=[A-Z0-9\(~])/g, '$1&');
         
-        // 4. Handle implicit AND (e.g. AB -> A&B, A(B) -> A&(B))
-        norm = norm.replace(/([A-Z\)])(?=[A-Z\(~])/g, '$1&');
-        
-        // 5. Inject actual 1s and 0s from the truth table iteration
-        Object.keys(inputs).forEach(v => {
+        Object.keys(inputs).sort((a,b) => b.length - a.length).forEach(v => {
             norm = norm.replace(new RegExp(v, 'g'), inputs[v]);
         });
         
-        // 6. Convert engine symbols to JavaScript eval-ready symbols
         let jsExpr = norm.replace(/&/g, '&&').replace(/\|/g, '||').replace(/~/g, '!');
         jsExpr = jsExpr.replace(/([01!&|()]+)\^([01!&|()]+)/g, '!!($1) !== !!($2)'); 
-
-        try {
-            return (new Function(`return !!(${jsExpr});`))() ? 1 : 0;
-        } catch(e) {
-            throw new Error(`Invalid Boolean Expression context: ${expr}`);
-        }
+        try { return (new Function(`return !!(${jsExpr});`))() ? 1 : 0; } 
+        catch(e) { throw new Error(`Invalid Boolean Expression context: ${expr}`); }
     }
+
     function quineMcCluskey(targets, dontCares, numVars) {
         if (targets.length === 0) return [];
         let allTerms = [...new Set([...targets, ...dontCares])];
         if (allTerms.length === Math.pow(2, numVars)) return ['1'];
-
         let groups = Array.from({length: numVars + 1}, () => []);
         allTerms.forEach(m => {
             let bin = m.toString(2).padStart(numVars, '0');
             let ones = bin.split('1').length - 1;
             groups[ones].push({ bits: bin, minterms: [m], used: false });
         });
-
         let primeImplicants = [];
         let changed = true;
-
         while (changed) {
             changed = false;
             let nextGroups = Array.from({length: numVars + 1}, () => []);
             let newTermsMap = new Set();
-
             for (let i = 0; i < groups.length - 1; i++) {
                 for (let t1 of groups[i]) {
                     for (let t2 of groups[i+1]) {
@@ -1275,8 +1466,7 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
                             if (t1.bits[k] !== t2.bits[k]) { diffs++; diffIdx = k; }
                         }
                         if (diffs === 1) {
-                            t1.used = true;
-                            t2.used = true;
+                            t1.used = true; t2.used = true;
                             let newBits = t1.bits.substring(0, diffIdx) + '-' + t1.bits.substring(diffIdx+1);
                             if (!newTermsMap.has(newBits)) {
                                 newTermsMap.add(newBits);
@@ -1289,18 +1479,13 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
                 }
             }
             for (let g of groups) {
-                for (let t of g) {
-                    if (!t.used && !primeImplicants.some(pi => pi.bits === t.bits)) {
-                        primeImplicants.push(t);
-                    }
-                }
+                for (let t of g) { if (!t.used && !primeImplicants.some(pi => pi.bits === t.bits)) { primeImplicants.push(t); } }
             }
             groups = nextGroups;
         }
 
         let uncovered = new Set(targets);
         let essential = [];
-
         targets.forEach(m => {
             let covers = primeImplicants.filter(pi => pi.minterms.includes(m));
             if (covers.length === 1) {
@@ -1311,7 +1496,6 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
                 }
             }
         });
-
         let solution = [...essential];
         while (uncovered.size > 0) {
             let bestPI = null, maxCover = 0;
@@ -1324,15 +1508,12 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
             solution.push(bestPI);
             bestPI.minterms.forEach(m => uncovered.delete(m));
         }
-        
         return solution.map(pi => pi.bits);
     }
 
     function renderKMapSVG(vars, minterms1, dontCares, primeImplicantsBits, sopTerms) {
         const numVars = vars.length;
         const groupColors = ['#00f3ff', '#f43f5e', '#10b981', '#f59e0b', '#a855f7', '#ec4899', '#3b82f6', '#84cc16'];
-        
-        // Define theme-aware colors for SVG
         const cBg = isLightMode ? '#ffffff' : '#040711';
         const cText = isLightMode ? '#0f172a' : '#f8fafc';
         const cTextDim = isLightMode ? '#64748b' : '#64748b';
@@ -1348,7 +1529,7 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
         }
 
         let numSubRows = 1, numSubCols = 1, numRows = 2, numCols = 2;
-        let rowVars = [], colVars = [], mapVars = [];
+        let rowVars = [], colVars = [];
         let rowGray = [0, 1], colGray = [0, 1];
         let rowGrayLabels = ['0', '1'], colGrayLabels = ['0', '1'];
         let subMapLabels = [''];
@@ -1357,18 +1538,14 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
         else if (numVars === 2) { rowVars = [vars[0]]; colVars = [vars[1]]; numRows = 2; numCols = 2; }
         else if (numVars === 3) { rowVars = [vars[0]]; colVars = [vars[1], vars[2]]; numRows = 2; numCols = 4; colGray = [0, 1, 3, 2]; colGrayLabels = ['00', '01', '11', '10']; }
         else if (numVars === 4) { rowVars = [vars[0], vars[1]]; colVars = [vars[2], vars[3]]; numRows = 4; numCols = 4; rowGray = [0, 1, 3, 2]; rowGrayLabels = ['00', '01', '11', '10']; colGray = [0, 1, 3, 2]; colGrayLabels = ['00', '01', '11', '10']; }
-        else if (numVars === 5) { mapVars = [vars[0]]; rowVars = [vars[1], vars[2]]; colVars = [vars[3], vars[4]]; numSubRows = 1; numSubCols = 2; numRows = 4; numCols = 4; rowGray = [0, 1, 3, 2]; rowGrayLabels = ['00', '01', '11', '10']; colGray = [0, 1, 3, 2]; colGrayLabels = ['00', '01', '11', '10']; subMapLabels = [`${vars[0]} = 0`, `${vars[0]} = 1`]; }
-        else if (numVars === 6) { mapVars = [vars[0], vars[1]]; rowVars = [vars[2], vars[3]]; colVars = [vars[4], vars[5]]; numSubRows = 2; numSubCols = 2; numRows = 4; numCols = 4; rowGray = [0, 1, 3, 2]; rowGrayLabels = ['00', '01', '11', '10']; colGray = [0, 1, 3, 2]; colGrayLabels = ['00', '01', '11', '10']; subMapLabels = [`${vars[0]}${vars[1]} = 00`, `${vars[0]}${vars[1]} = 01`, `${vars[0]}${vars[1]} = 10`, `${vars[0]}${vars[1]} = 11`]; }
+        else if (numVars === 5) { rowVars = [vars[1], vars[2]]; colVars = [vars[3], vars[4]]; numSubRows = 1; numSubCols = 2; numRows = 4; numCols = 4; rowGray = [0, 1, 3, 2]; rowGrayLabels = ['00', '01', '11', '10']; colGray = [0, 1, 3, 2]; colGrayLabels = ['00', '01', '11', '10']; subMapLabels = [`${vars[0]} = 0`, `${vars[0]} = 1`]; }
+        else if (numVars === 6) { rowVars = [vars[2], vars[3]]; colVars = [vars[4], vars[5]]; numSubRows = 2; numSubCols = 2; numRows = 4; numCols = 4; rowGray = [0, 1, 3, 2]; rowGrayLabels = ['00', '01', '11', '10']; colGray = [0, 1, 3, 2]; colGrayLabels = ['00', '01', '11', '10']; subMapLabels = [`${vars[0]}${vars[1]} = 00`, `${vars[0]}${vars[1]} = 01`, `${vars[0]}${vars[1]} = 10`, `${vars[0]}${vars[1]} = 11`]; }
 
         function getMinterm(sR, sC, r, c) {
             let subVal = 0;
-            if (numVars === 5) subVal = sC;
-            else if (numVars === 6) subVal = [[0, 1], [2, 3]][sR][sC];
-
-            if (numVars === 1) return r;
-            if (numVars === 2) return (r << 1) | c;
-            if (numVars === 3) return (r << 2) | colGray[c];
-            if (numVars === 4) return (rowGray[r] << 2) | colGray[c];
+            if (numVars === 5) subVal = sC; else if (numVars === 6) subVal = [[0, 1], [2, 3]][sR][sC];
+            if (numVars === 1) return r; if (numVars === 2) return (r << 1) | c;
+            if (numVars === 3) return (r << 2) | colGray[c]; if (numVars === 4) return (rowGray[r] << 2) | colGray[c];
             if (numVars >= 5) return (subVal << 4) | (rowGray[r] << 2) | colGray[c];
         }
 
@@ -1409,7 +1586,6 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
                         const m = getMinterm(sR, sC, r, c);
                         const val = mintermValue[m];
                         const x = startX + c * cellW, y = startY + r * cellH;
-
                         svg += `<text x="${x + cellW - 5}" y="${y + 13}" font-size="9" fill="${cTextDim}" text-anchor="end">${m}</text>`;
                         let valColor = val === '1' ? '#10b981' : (val === 'X' ? '#f59e0b' : cZero);
                         svg += `<text x="${x + cellW/2}" y="${y + cellH/2 + 7}" font-size="20" font-weight="bold" fill="${valColor}" text-anchor="middle">${val}</text>`;
@@ -1421,7 +1597,6 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
         primeImplicantsBits.forEach((bits, idx) => {
             const col = groupColors[idx % groupColors.length];
             const inset = 5 + (idx % 3) * 3;
-
             for (let sR = 0; sR < numSubRows; sR++) {
                 for (let sC = 0; sC < numSubCols; sC++) {
                     const startX = 20 + sC * (subMapWidth + gapX) + headerW;
@@ -1440,7 +1615,6 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
                     }
 
                     if (cellCount === 0) continue;
-
                     const rows = Array.from(coveredRows).sort((a,b)=>a-b);
                     const cols = Array.from(coveredCols).sort((a,b)=>a-b);
                     const isRowWrapped = (rows.length === 2 && rows[0] === 0 && rows[1] === numRows - 1);
@@ -1461,16 +1635,13 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
                     }
 
                     if (isRowWrapped) {
-                        const gx1 = startX + Math.min(...cols) * cellW + inset;
-                        const gx2 = startX + (Math.max(...cols) + 1) * cellW - inset;
+                        const gx1 = startX + Math.min(...cols) * cellW + inset; const gx2 = startX + (Math.max(...cols) + 1) * cellW - inset;
                         svg += `<path d="M ${gx1},${startY + cellH - inset} V ${startY + inset} H ${gx2} V ${startY + cellH - inset}" fill="${col}" fill-opacity="0.12" stroke="${col}" stroke-width="2.5" />`;
                         svg += `<path d="M ${gx1},${startY + (numRows - 1) * cellH + inset} V ${startY + numRows * cellH - inset} H ${gx2} V ${startY + (numRows - 1) * cellH + inset}" fill="${col}" fill-opacity="0.12" stroke="${col}" stroke-width="2.5" />`;
                         continue;
                     }
-
                     if (isColWrapped) {
-                        const gy1 = startY + Math.min(...rows) * cellH + inset;
-                        const gy2 = startY + (Math.max(...rows) + 1) * cellH - inset;
+                        const gy1 = startY + Math.min(...rows) * cellH + inset; const gy2 = startY + (Math.max(...rows) + 1) * cellH - inset;
                         svg += `<path d="M ${startX + cellW - inset},${gy1} H ${startX + inset} V ${gy2} H ${startX + cellW - inset}" fill="${col}" fill-opacity="0.12" stroke="${col}" stroke-width="2.5" />`;
                         svg += `<path d="M ${startX + (numCols - 1) * cellW + inset},${gy1} H ${startX + numCols * cellW - inset} V ${gy2} H ${startX + (numCols - 1) * cellW + inset}" fill="${col}" fill-opacity="0.12" stroke="${col}" stroke-width="2.5" />`;
                         continue;
@@ -1483,12 +1654,10 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
                 }
             }
         });
-
         svg += `</svg>`;
 
         const bgLeg = isLightMode ? '#f8fafc' : 'rgba(15,23,42,0.85)';
         const txLeg = isLightMode ? '#0f172a' : '#f8fafc';
-        
         let legendHtml = `<div style="margin-top:1.25rem; display:flex; flex-wrap:wrap; justify-content:center; gap:0.75rem;">`;
         primeImplicantsBits.forEach((bits, idx) => {
             const col = groupColors[idx % groupColors.length];
@@ -1499,71 +1668,71 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
             </div>`;
         });
         legendHtml += `</div>`;
-
         return `<div style="display:flex; flex-direction:column; align-items:center; overflow-x:auto; padding:1rem 0;">${svg}${legendHtml}</div>`;
     }
 
-    window.circuitASTs = window.circuitASTs || {};
-
-    function runSynthesis(vars, tt, index = 0) {
+    function runSynthesis(vars, tt, index = 0, limit2 = true) {
         const minterms1 = tt.map((v, i) => v === 1 ? i : -1).filter(i => i !== -1);
         const minterms0 = tt.map((v, i) => v === 0 ? i : -1).filter(i => i !== -1);
         const dontCares = tt.map((v, i) => v === 'X' ? i : -1).filter(i => i !== -1);
         
         const qmSOP = quineMcCluskey(minterms1, dontCares, vars.length);
         const qmPOS = quineMcCluskey(minterms0, dontCares, vars.length); 
-        
         const sopTerms = qmSOP.map(bits => bitsToLiterals(bits, vars, true));
         const posTerms = qmPOS.map(bits => bitsToLiterals(bits, vars, false));
 
         const sopEq = formatEquation(sopTerms, false);
         const posEq = formatEquation(posTerms, true);
-        
         const kmapHtml = renderKMapSVG(vars, minterms1, dontCares, qmSOP, sopTerms);
         const ttHtml = generateTruthTableHTML(vars, tt);
 
-        const astStandard = buildStandardAST(sopTerms);
-        const astStandardPOS = buildPOSStandardAST(posTerms);
-        
-        const astNAND = convertToNAND(astStandard);
-        const astNOR = convertToNOR(astStandardPOS);
+        const astStandard = buildOptimizedStandardAST(sopTerms, limit2);
+        const astNAND = buildOptimizedNANDAST(sopTerms, limit2);
+        const astNOR = buildOptimizedNORAST(posTerms, limit2);
 
-        const verified = verifyASTs(vars, tt, astStandard, astNAND, astNOR);
+        const mStandard = calculateMetrics(astStandard);
+        const mNAND = calculateMetrics(astNAND);
+        const mNOR = calculateMetrics(astNOR);
+
+        let verified = true;
+        try { verified = verifyASTs(vars, tt, astStandard, astNAND, astNOR); } catch(e) { verified = false; }
         const veriClass = verified ? 'success' : 'fail';
-        const veriText = verified ? '✓ Verification Passed: Minimized K-Map terms, NAND-only, and NOR-only circuits match.' : '✗ Verification Failed: Circuit outputs mismatch.';
+        const veriText = verified ? '✓ Verification Passed: K-Map minimized expressions and all generated logic circuits strictly match the Truth Table.' : '✗ Verification Failed: Logic output mismatch constraints.';
+
+        const uniqueId = `job-${index}`;
+        window.liveSimRegistry[uniqueId] = { vars: vars, std: astStandard, nand: astNAND, nor: astNOR };
+        const renderSimHeader = `<div style="margin-bottom:0.75rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;"><span style="font-size:0.85rem; color:var(--accent-cyan); font-weight:600;">👆 Click any input pin (0/1) to test signal propagation</span></div>`;
 
         return `
             <div class="verification ${veriClass}">${veriText}</div>
-            
-            <div class="kmap-wrapper">
-                <h3>📊 Karnaugh Map (K-Map) Solver (${vars.length} Variables)</h3>
-                ${kmapHtml}
-            </div>
-
+            <div class="kmap-wrapper"><h3>📊 Karnaugh Map (K-Map) Solver (${vars.length} Variables)</h3>${kmapHtml}</div>
             <div class="grid-2">
-                <div class="result-box">
-                    <h3>Minimized Boolean Expressions</h3>
+                <div class="result-box"><h3>Minimized Boolean Expressions</h3>
                     <p><strong>SOP (Sum of Products):</strong> <br><span class="code-font">${sopEq}</span></p>
                     <p style="margin-top:0.75rem;"><strong>POS (Product of Sums):</strong> <br><span class="code-font">${posEq}</span></p>
                 </div>
-                <div class="result-box">
-                    <h3>Truth Table</h3>
-                    ${ttHtml}
-                </div>
+                <div class="result-box"><h3>Truth Table</h3>${ttHtml}</div>
             </div>
-
-            <h3>Synthesized Logic Circuits</h3>
+            <h3>Synthesized Logic Circuits (Interactive Simulation)</h3>
+            <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1rem;">Gates automatically minimized & node redundancies eliminated with wire-jump crossovers.</p>
+            
             <div class="circuit-box">
                 <h4>Standard Circuit (AND, OR, NOT)</h4>
-                <div class="svg-container">${renderAST(astStandard)}</div>
+                <div class="metrics-badge"><span>⚡ Gates: <strong>${mStandard.gates}</strong></span><span>🔬 Transistors: <strong>${mStandard.transistors}T</strong></span></div>
+                ${renderSimHeader}
+                <div class="svg-container" id="svg-${uniqueId}-std">${renderDAGBus(astStandard, uniqueId, vars, 'std')}</div>
             </div>
             <div class="circuit-box">
                 <h4>Universal NAND-Only Circuit</h4>
-                <div class="svg-container">${renderAST(astNAND)}</div>
+                <div class="metrics-badge"><span>⚡ Gates: <strong>${mNAND.gates}</strong></span><span>🔬 Transistors: <strong>${mNAND.transistors}T</strong></span></div>
+                ${renderSimHeader}
+                <div class="svg-container" id="svg-${uniqueId}-nand">${renderDAGBus(astNAND, uniqueId, vars, 'nand')}</div>
             </div>
             <div class="circuit-box">
                 <h4>Universal NOR-Only Circuit</h4>
-                <div class="svg-container">${renderAST(astNOR)}</div>
+                <div class="metrics-badge"><span>⚡ Gates: <strong>${mNOR.gates}</strong></span><span>🔬 Transistors: <strong>${mNOR.transistors}T</strong></span></div>
+                ${renderSimHeader}
+                <div class="svg-container" id="svg-${uniqueId}-nor">${renderDAGBus(astNOR, uniqueId, vars, 'nor')}</div>
             </div>
         `;
     }
@@ -1581,13 +1750,9 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
     function formatEquation(terms, isPOS) {
         if (terms.length === 0) return isPOS ? "1" : "0";
         if (terms[0][0] === '1') return isPOS ? "0" : "1";
-        
         let outerJoin = isPOS ? '' : ' + ';
         let innerJoin = isPOS ? ' + ' : '';
-        let strings = terms.map(t => {
-            let inner = t.join(innerJoin);
-            return isPOS ? `(${inner})` : inner;
-        });
+        let strings = terms.map(t => { let inner = t.join(innerJoin); return isPOS ? `(${inner})` : inner; });
         return strings.join(outerJoin);
     }
 
@@ -1595,7 +1760,6 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
         let html = '<div class="tt-container"><table><thead><tr>';
         vars.forEach(v => html += `<th>${v}</th>`);
         html += '<th>Output</th></tr></thead><tbody>';
-        
         for(let i=0; i<tt.length; i++) {
             html += '<tr>';
             for(let j=0; j<vars.length; j++) {
@@ -1609,211 +1773,321 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
         return html;
     }
 
-    function buildStandardAST(sopTerms) {
-        if (sopTerms.length === 0) return { type: 'CONST', value: 0 };
-        if (sopTerms[0][0] === '1') return { type: 'CONST', value: 1 };
-
-        let orNodes = sopTerms.map(term => {
-            let andNodes = term.map(lit => {
-                if (lit.startsWith('~')) return { type: 'NOT', children: [{ type: 'VAR', value: lit.substring(1) }] };
-                return { type: 'VAR', value: lit };
-            });
-            if (andNodes.length === 0) return { type: 'CONST', value: 1 };
-            return andNodes.reduce((acc, curr) => ({ type: 'AND', children: [acc, curr] }));
+    function buildOptimizedStandardAST(sopTerms, limit2) {
+        resetDag();
+        if (sopTerms.length === 0) return getDagNode('CONST', 0, null);
+        if (sopTerms[0][0] === '1') return getDagNode('CONST', 1, null);
+        const productNodes = sopTerms.map(term => {
+            if (term.length === 1) return literalToNode(term[0]);
+            return buildGate('AND', term.map(literalToNode), limit2);
         });
-        
-        if (orNodes.length === 0) return { type: 'CONST', value: 0 };
-        return orNodes.reduce((acc, curr) => ({ type: 'OR', children: [acc, curr] }));
+        if (productNodes.length === 1) return productNodes[0];
+        return buildGate('OR', productNodes, limit2);
     }
 
-    function buildPOSStandardAST(posTerms) {
-        if (posTerms.length === 0) return { type: 'CONST', value: 1 };
-        if (posTerms[0][0] === '1') return { type: 'CONST', value: 0 };
+    function buildOptimizedNANDAST(sopTerms, limit2) {
+        let std = buildOptimizedStandardAST(sopTerms, limit2);
+        return limit2 ? mapToNAND(std) : mapToNAND_Multi(std);
+    }
 
-        let andNodes = posTerms.map(term => {
-            let orNodes = term.map(lit => {
-                if (lit.startsWith('~')) return { type: 'NOT', children: [{ type: 'VAR', value: lit.substring(1) }] };
-                return { type: 'VAR', value: lit };
-            });
-            if (orNodes.length === 0) return { type: 'CONST', value: 0 };
-            return orNodes.reduce((acc, curr) => ({ type: 'OR', children: [acc, curr] }));
+    function buildOptimizedNORAST(posTerms, limit2) {
+        resetDag();
+        if (posTerms.length === 0) return getDagNode('CONST', 1, null);
+        if (posTerms[0][0] === '1') return getDagNode('CONST', 0, null);
+        const sumNodes = posTerms.map(term => {
+            if (term.length === 1) return literalToNode(term[0]);
+            return buildGate('OR', term.map(literalToNode), limit2);
         });
-        
-        if (andNodes.length === 0) return { type: 'CONST', value: 1 };
-        return andNodes.reduce((acc, curr) => ({ type: 'AND', children: [acc, curr] }));
+        let stdPOS = sumNodes.length === 1 ? sumNodes[0] : buildGate('AND', sumNodes, limit2);
+        return limit2 ? mapToNOR(stdPOS) : mapToNOR_Multi(stdPOS);
     }
 
-    function astEquals(n1, n2) {
-        if (n1 === n2) return true;
-        if (!n1 || !n2 || n1.type !== n2.type || n1.value !== n2.value) return false;
-        let len1 = n1.children ? n1.children.length : 0;
-        let len2 = n2.children ? n2.children.length : 0;
-        if (len1 !== len2) return false;
-        if (len1 === 0) return true;
-        for (let i = 0; i < len1; i++) if (!astEquals(n1.children[i], n2.children[i])) return false;
-        return true;
+    function mapToNAND(node) {
+        if (node.nandMap) return node.nandMap;
+        let res;
+        if (node.type === 'VAR' || node.type === 'CONST') res = node;
+        else if (node.type === 'NOT') { let c = mapToNAND(node.children[0]); res = getDagNode('NAND', null, [c, c]); } 
+        else if (node.type === 'AND') { let c0 = mapToNAND(node.children[0]); let c1 = mapToNAND(node.children[1]); let nand = getDagNode('NAND', null, [c0, c1]); res = getDagNode('NAND', null, [nand, nand]); } 
+        else if (node.type === 'OR') { let c0 = mapToNAND(node.children[0]); let c1 = mapToNAND(node.children[1]); let n0 = getDagNode('NAND', null, [c0, c0]); let n1 = getDagNode('NAND', null, [c1, c1]); res = getDagNode('NAND', null, [n0, n1]); }
+        node.nandMap = res; return res;
     }
 
-    function NOT_NAND(node) {
-        if (node.type === 'NAND' && astEquals(node.children[0], node.children[1])) return node.children[0];
-        return { type: 'NAND', children: [node, node] };
-    }
-    function convertToNAND(node) {
-        if (node.type === 'VAR' || node.type === 'CONST') return node;
-        if (node.type === 'NOT') return NOT_NAND(convertToNAND(node.children[0]));
-        if (node.type === 'AND') return NOT_NAND({ type: 'NAND', children: [convertToNAND(node.children[0]), convertToNAND(node.children[1])] });
-        if (node.type === 'OR') return { type: 'NAND', children: [NOT_NAND(convertToNAND(node.children[0])), NOT_NAND(convertToNAND(node.children[1]))] };
+    function mapToNOR(node) {
+        if (node.norMap) return node.norMap;
+        let res;
+        if (node.type === 'VAR' || node.type === 'CONST') res = node;
+        else if (node.type === 'NOT') { let c = mapToNOR(node.children[0]); res = getDagNode('NOR', null, [c, c]); } 
+        else if (node.type === 'AND') { let c0 = mapToNOR(node.children[0]); let c1 = mapToNOR(node.children[1]); let n0 = getDagNode('NOR', null, [c0, c0]); let n1 = getDagNode('NOR', null, [c1, c1]); res = getDagNode('NOR', null, [n0, n1]); } 
+        else if (node.type === 'OR') { let c0 = mapToNOR(node.children[0]); let c1 = mapToNOR(node.children[1]); let nor = getDagNode('NOR', null, [c0, c1]); res = getDagNode('NOR', null, [nor, nor]); }
+        node.norMap = res; return res;
     }
 
-    function NOT_NOR(node) {
-        if (node.type === 'NOR' && astEquals(node.children[0], node.children[1])) return node.children[0];
-        return { type: 'NOR', children: [node, node] };
+    function mapToNAND_Multi(node) {
+        if (node.nandMap) return node.nandMap;
+        let res;
+        if (node.type === 'VAR' || node.type === 'CONST') res = node;
+        else if (node.type === 'NOT') { let c = mapToNAND_Multi(node.children[0]); res = getDagNode('NAND', null, [c, c]); } 
+        else if (node.type === 'AND') { let children = node.children.map(mapToNAND_Multi); let nand = getDagNode('NAND', null, children); res = getDagNode('NAND', null, [nand, nand]); } 
+        else if (node.type === 'OR') { let children = node.children.map(c => { let mc = mapToNAND_Multi(c); return getDagNode('NAND', null, [mc, mc]); }); res = getDagNode('NAND', null, children); }
+        node.nandMap = res; return res;
     }
-    function convertToNOR(node) {
-        if (node.type === 'VAR' || node.type === 'CONST') return node;
-        if (node.type === 'NOT') return NOT_NOR(convertToNOR(node.children[0]));
-        if (node.type === 'AND') return { type: 'NOR', children: [NOT_NOR(convertToNOR(node.children[0])), NOT_NOR(convertToNOR(node.children[1]))] };
-        if (node.type === 'OR') return NOT_NOR({ type: 'NOR', children: [convertToNOR(node.children[0]), convertToNOR(node.children[1])] });
+
+    function mapToNOR_Multi(node) {
+        if (node.norMap) return node.norMap;
+        let res;
+        if (node.type === 'VAR' || node.type === 'CONST') res = node;
+        else if (node.type === 'NOT') { let c = mapToNOR_Multi(node.children[0]); res = getDagNode('NOR', null, [c, c]); } 
+        else if (node.type === 'AND') { let children = node.children.map(c => { let mc = mapToNOR_Multi(c); return getDagNode('NOR', null, [mc, mc]); }); res = getDagNode('NOR', null, children); } 
+        else if (node.type === 'OR') { let children = node.children.map(mapToNOR_Multi); let nor = getDagNode('NOR', null, children); res = getDagNode('NOR', null, [nor, nor]); }
+        node.norMap = res; return res;
+    }
+
+    function calculateMetrics(node) {
+        let gates = 0, transistors = 0;
+        let visited = new Set();
+        function traverse(n) {
+            if (!n || n.type === 'VAR' || n.type === 'CONST' || visited.has(n)) return;
+            visited.add(n); gates++;
+            const k = n.children ? n.children.length : 1;
+            if (n.type === 'NOT') { transistors += 2; } 
+            else if (n.type === 'NAND' || n.type === 'NOR') { transistors += (k === 2 && n.children[0] === n.children[1]) ? 2 : (2 * k); } 
+            else if (n.type === 'AND' || n.type === 'OR') { transistors += (2 * k + 2); }
+            if (n.children) n.children.forEach(traverse);
+        }
+        traverse(node); return { gates, transistors };
     }
 
     function evaluateAST(node, inputs) {
-        if (!node) return 0;
-        if (node.type === 'CONST') return node.value;
-        if (node.type === 'VAR') return inputs[node.value] || 0;
-        if (node.type === 'NOT') return !evaluateAST(node.children[0], inputs);
-        if (node.type === 'AND') return node.children.reduce((acc, c) => acc && evaluateAST(c, inputs), true);
-        if (node.type === 'OR') return node.children.reduce((acc, c) => acc || evaluateAST(c, inputs), false);
-        if (node.type === 'NAND') return !(node.children.reduce((acc, c) => acc && evaluateAST(c, inputs), true));
-        if (node.type === 'NOR') return !(node.children.reduce((acc, c) => acc || evaluateAST(c, inputs), false));
+        let evCache = new Map();
+        function ev(n) {
+            if (!n) return 0;
+            if (evCache.has(n)) return evCache.get(n);
+            let val = 0;
+            if (n.type === 'CONST') val = n.value;
+            else if (n.type === 'VAR') val = inputs[n.value] !== undefined ? inputs[n.value] : 0;
+            else if (n.type === 'NOT') val = ev(n.children[0]) ? 0 : 1;
+            else if (n.type === 'AND') val = n.children.every(c => ev(c) === 1) ? 1 : 0;
+            else if (n.type === 'OR') val = n.children.some(c => ev(c) === 1) ? 1 : 0;
+            else if (n.type === 'NAND') val = n.children.every(c => ev(c) === 1) ? 0 : 1;
+            else if (n.type === 'NOR') val = n.children.some(c => ev(c) === 1) ? 0 : 1;
+            evCache.set(n, val); return val;
+        }
+        return ev(node);
     }
 
     function verifyASTs(vars, ttOriginal, astSOP, astNAND, astNOR) {
         for(let i=0; i<ttOriginal.length; i++) {
             if (ttOriginal[i] === 'X') continue;
             let inputVals = {};
-            for(let j=0; j<vars.length; j++) {
-                inputVals[vars[j]] = (i & (1 << (vars.length - 1 - j))) ? 1 : 0;
-            }
-            let resSOP = evaluateAST(astSOP, inputVals) ? 1 : 0;
-            let resNAND = evaluateAST(astNAND, inputVals) ? 1 : 0;
-            let resNOR = evaluateAST(astNOR, inputVals) ? 1 : 0;
+            for(let j=0; j<vars.length; j++) { inputVals[vars[j]] = (i & (1 << (vars.length - 1 - j))) ? 1 : 0; }
+            let resSOP = evaluateAST(astSOP, inputVals);
+            let resNAND = evaluateAST(astNAND, inputVals);
+            let resNOR = evaluateAST(astNOR, inputVals);
             if(resSOP !== ttOriginal[i] || resNAND !== ttOriginal[i] || resNOR !== ttOriginal[i]) return false;
         }
         return true;
     }
 
-    function cloneTree(node) {
-        if (!node) return null;
-        let clone = { type: node.type, value: node.value };
-        if (node.children) clone.children = node.children.map(cloneTree);
-        return clone;
-    }
+    // -------------------------------------------------------------
+    // VISUAL DAG RENDERER (Bus Layout & Wire Crossing Jumps)
+    // -------------------------------------------------------------
+    function renderDAGBus(rootNode, uniqueId, vars, circuitType) {
+        let allNodes = new Set();
+        function collect(n) { if(!n || allNodes.has(n)) return; allNodes.add(n); if(n.children) n.children.forEach(collect); }
+        collect(rootNode);
+        let nodesArray = Array.from(allNodes);
 
-    function layoutNode(node) {
-        if (node.type === 'VAR' || node.type === 'CONST') {
-            node.w = 50; node.h = 40; return {w: 50, h: 40};
+        function isBusNode(n) {
+            return n.type === 'VAR' || n.type === 'CONST' || (n.type === 'NOT' && n.children[0].type === 'VAR');
         }
-        let totalH = 0; let maxW = 0;
-        node.children.forEach((c) => {
-            let dim = layoutNode(c);
-            totalH += dim.h;
-            maxW = Math.max(maxW, dim.w);
+
+        let gateNodes = nodesArray.filter(n => !isBusNode(n));
+        
+        let depths = new Map();
+        function getDepth(n) {
+            if(depths.has(n)) return depths.get(n);
+            if(!gateNodes.includes(n)) return 0;
+            let d = 0;
+            n.children.forEach(c => d = Math.max(d, getDepth(c)));
+            d += 1;
+            depths.set(n, d);
+            return d;
+        }
+        gateNodes.forEach(getDepth);
+        
+        let maxDepth = 0;
+        gateNodes.forEach(n => maxDepth = Math.max(maxDepth, depths.get(n)));
+        let layers = Array.from({length: maxDepth + 1}, () => []);
+        gateNodes.forEach(n => layers[depths.get(n)].push(n));
+
+        let startX = 60, startY = 80;
+        let busLines = {};
+        
+        vars.forEach((v, i) => {
+            busLines[v] = startX + i * 60;
+            busLines['~' + v] = busLines[v] + 30;
         });
-        node.h = Math.max(totalH + (node.children.length - 1) * 25, 60);
-        node.w = maxW + 110; 
-        return {w: node.w, h: node.h};
-    }
+        
+        let busWidth = vars.length * 60;
+        let gatesStartX = startX + busWidth + 60;
+        let spacingX = 160, spacingY = 120; // Expanded spacing for cleaner routes
 
-    function positionNode(node, x, y) {
-        node.x = x; node.y = y;
-        if (!node.children || node.children.length === 0) return;
+        let maxY = Math.max(vars.length * spacingY, ...layers.map(l => l.length * spacingY));
+        if(maxY < 200) maxY = 200;
         
-        let totalH = node.children.reduce((sum, c) => sum + c.h, 0);
-        let startY = y - (totalH + (node.children.length - 1) * 25) / 2;
-        
-        node.children.forEach(c => {
-            let childY = startY + c.h / 2;
-            positionNode(c, x - 110, childY); 
-            startY += c.h + 25;
+        layers.forEach((layer, d) => {
+            if(d === 0) return;
+            let layerHeight = layer.length * spacingY;
+            let offset = startY + (maxY - layerHeight) / 2;
+            layer.forEach((n, idx) => {
+                n.x = gatesStartX + (d - 1) * spacingX;
+                n.y = offset + idx * spacingY;
+            });
         });
-    }
 
-    function renderAST(originalNode) {
-        const cBgNode = isLightMode ? '#f1f5f9' : '#1e293b';
-        const cWire = isLightMode ? '#94a3b8' : '#475569';
-        const cPrimary = isLightMode ? '#0284c7' : '#00f3ff';
-        const cText = isLightMode ? '#0f172a' : '#f8fafc';
-        const cNotBg = isLightMode ? '#ffffff' : '#0b0f19';
+        let finalMaxY = startY + maxY + 20;
+        let vLines = [];
+        vars.forEach(v => {
+            vLines.push({x: busLines[v], y1: startY - 20, y2: finalMaxY, label: v});
+            vLines.push({x: busLines['~' + v], y1: startY - 20, y2: finalMaxY, type: 'NOT'});
+        });
 
-        let node = cloneTree(originalNode);
-        if(node.type === 'CONST') return `<svg width="240" height="60"><text x="120" y="35" text-anchor="middle" font-family="sans-serif" fill="${cText}">Output is constant ${node.value}</text></svg>`;
+        let hSegments = [];
+        let connectionDots = [];
         
-        layoutNode(node);
-        positionNode(node, 0, 0); 
+        let usedVLines = new Set();
+        let usedHLines = new Set();
+        let outDriveCount = {};
+        let currentDriveIndex = {};
+        
+        gateNodes.forEach(n => {
+            n.children.forEach(c => {
+                if(!isBusNode(c)) outDriveCount[c.id] = (outDriveCount[c.id] || 0) + 1;
+            });
+        });
 
-        let bounds = { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity };
-        function calcBounds(n) {
-            bounds.minX = Math.min(bounds.minX, n.x - 40);
-            bounds.maxX = Math.max(bounds.maxX, n.x + 60);
-            bounds.minY = Math.min(bounds.minY, n.y - 40);
-            bounds.maxY = Math.max(bounds.maxY, n.y + 40);
-            if(n.children) n.children.forEach(calcBounds);
+        gateNodes.forEach(n => {
+            n.children.forEach((c, i) => {
+                let spread = Math.min(32, (n.children.length - 1) * 12);
+                let step = n.children.length > 1 ? spread / (n.children.length - 1) : 0;
+                let inY = n.y - spread/2 + i * step;
+                let inX = n.x - 20;
+                
+                if (isBusNode(c)) {
+                    let lit = c.type === 'VAR' ? c.value : (c.type === 'NOT' ? '~' + c.children[0].value : c.value.toString());
+                    if (lit === '0' || lit === '1') {
+                        hSegments.push({x1: inX - 20, x2: inX, y: inY, css: `wire-from-const`, color: 'var(--wire-off)'});
+                    } else {
+                        let bX = busLines[lit];
+                        connectionDots.push({x: bX, y: inY});
+                        hSegments.push({x1: bX, x2: inX, y: inY, css: `wire-from-bus-${lit.replace('~','not_')}`, color: 'var(--wire-off)'});
+                    }
+                } else {
+                    let outX = c.type.includes('N') ? c.x + 28 : (c.type === 'NOT' ? c.x + 13 : c.x + 24);
+                    let layerGapStart = outX + 15;
+                    let layerGapEnd = inX - 15;
+                    
+                    let midX = Math.floor(layerGapStart + ((n.id * 7 + c.id * 11 + i * 13) % Math.max(1, (layerGapEnd - layerGapStart))));
+                    while(usedVLines.has(midX)) midX += 5;
+                    usedVLines.add(midX);
+
+                    let driveIdx = currentDriveIndex[c.id] || 0;
+                    currentDriveIndex[c.id] = driveIdx + 1;
+
+                    let routeY = c.y + 25 + Math.floor((c.id * 3 + driveIdx * 7) % 40);
+                    while(usedHLines.has(routeY)) routeY += 5;
+                    usedHLines.add(routeY);
+
+                    let branchX = outX + 6 + driveIdx * 4;
+
+                    hSegments.push({x1: outX, x2: branchX, y: c.y, css: `wire-from-${c.id}`, color: 'var(--wire-off)'});
+                    if (routeY !== c.y) {
+                        vLines.push({x: branchX, y1: c.y, y2: routeY});
+                    }
+                    hSegments.push({x1: branchX, x2: midX, y: routeY, css: `wire-from-${c.id}`, color: 'var(--wire-off)'});
+                    vLines.push({x: midX, y1: routeY, y2: inY});
+                    hSegments.push({x1: midX, x2: inX, y: inY, css: `wire-from-${c.id}`, color: 'var(--wire-off)'});
+                }
+            });
+        });
+
+        let svgW = gatesStartX + maxDepth * spacingX + 100;
+        let svgH = finalMaxY + 40;
+        
+        function buildJumpPath(x1, x2, y, css) {
+            let sX = Math.min(x1, x2), eX = Math.max(x1, x2);
+            let crosses = vLines.filter(v => v.x > sX + 5 && v.x < eX - 5 && y > Math.min(v.y1, v.y2) && y < Math.max(v.y1, v.y2))
+                                .map(v => v.x).sort((a,b)=>a-b);
+            let d = `M ${sX},${y} `;
+            let curX = sX;
+            for(let cx of crosses) { 
+                if (cx - 5 > curX) {
+                    d += `L ${cx - 5},${y} A 5 5 0 0 0 ${cx + 5},${y} `;
+                    curX = cx + 5;
+                }
+            }
+            d += `L ${eX},${y}`;
+            return `<path class="${css}" d="${d}" fill="none" stroke="var(--wire-off)" stroke-width="1.5"/>`;
         }
-        calcBounds(node);
 
-        let padX = 40; let padY = 40;
-        let shiftX = -bounds.minX + padX;
-        let shiftY = -bounds.minY + padY;
+        let svg = `<svg width="${svgW}" height="${svgH}" xmlns="http://www.w3.org/2000/svg" style="user-select:none;">`;
         
-        function applyShift(n) {
-            n.x += shiftX; n.y += shiftY;
-            if(n.children) n.children.forEach(applyShift);
+        vLines.forEach(v => {
+            let startYAdjust = v.y1 + (v.type === 'NOT' ? 31 : 0);
+            let endY = v.y2;
+            let wireCss = v.label ? `wire-from-bus-${v.label}` : (v.type==='NOT' ? `wire-from-bus-not_${v.x}` : 'wire-route');
+            svg += `<path class="${wireCss}" d="M ${v.x},${startYAdjust} V ${endY}" stroke="var(--wire-off)" stroke-width="1.5" fill="none"/>`;
+            
+            if(v.label) {
+                const clickAttr = uniqueId ? `onclick="window.togglePinSim('${uniqueId}', '${v.label}')" style="cursor:pointer;"` : '';
+                svg += `<g ${clickAttr}>`;
+                svg += `<rect class="input-box-${v.label}" x="${v.x - 12}" y="${v.y1 - 25}" width="24" height="24" rx="4" fill="var(--bg-block)" stroke="var(--border-color)"/>`;
+                svg += `<text x="${v.x}" y="${v.y1 - 8}" text-anchor="middle" font-family="'Fira Code', monospace" font-size="14" font-weight="bold" fill="var(--primary)">${v.label}</text>`;
+                svg += `<text class="input-val-${v.label}" x="${v.x}" y="${v.y1 + 12}" text-anchor="middle" font-family="'Fira Code', monospace" font-size="11" font-weight="bold" fill="var(--accent-rose)">0</text>`;
+                svg += `</g>`;
+            }
+            if(v.type === 'NOT') {
+                svg += `<path class="wire-from-bus-connect" d="M ${v.x - 30},${v.y1 + 15} H ${v.x - 8}" stroke="var(--wire-off)" stroke-width="1.5" fill="none"/>`;
+                svg += `<circle cx="${v.x - 30}" cy="${v.y1 + 15}" r="3" fill="var(--primary)"/>`;
+                svg += `<polygon points="${v.x-8},${v.y1+5} ${v.x+8},${v.y1+5} ${v.x},${v.y1+20}" fill="var(--bg-block)" stroke="var(--primary)" stroke-width="1.5"/>`;
+                svg += `<circle cx="${v.x}" cy="${v.y1+23}" r="3" fill="var(--bg-main)" stroke="var(--primary)" stroke-width="1.5"/>`;
+            }
+        });
+
+        hSegments.forEach(h => {
+            svg += buildJumpPath(h.x1, h.x2, h.y, h.css);
+        });
+
+        connectionDots.forEach(dot => {
+            svg += `<circle cx="${dot.x}" cy="${dot.y}" r="3.5" fill="var(--primary)"/>`;
+        });
+
+        gateNodes.forEach(n => {
+            svg += drawDAGGate(n, uniqueId);
+        });
+
+        let root = rootNode;
+        if(isBusNode(rootNode)) {
+             svg += `<text x="${gatesStartX}" y="${startY}" fill="var(--text-main)">Circuit simply wires to ${rootNode.value || rootNode.children[0].value}</text>`;
+        } else {
+            let outX = root.type.includes('N') ? root.x + 28 : (root.type === 'NOT' ? root.x + 13 : root.x + 24);
+            svg += `<path class="wire-from-${root.id}" d="M ${outX},${root.y} L ${outX + 40},${root.y}" stroke="var(--wire-off)" stroke-width="2.5" fill="none"/>`;
+            svg += `<text class="circuit-out-text" x="${outX + 45}" y="${root.y + 5}" font-family="'Fira Code', monospace" font-weight="bold" fill="var(--primary)">Out</text>`;
         }
-        applyShift(node);
 
-        let svgWidth = (bounds.maxX - bounds.minX) + (padX * 2); 
-        let svgHeight = (bounds.maxY - bounds.minY) + (padY * 2);
-
-        let svg = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg" style="user-select:none;">`;
-        svg += drawConnections(node, cWire);
-        svg += drawNodes(node, cBgNode, cPrimary, cText, cNotBg);
-        
-        let outX = node.type.includes('N') ? node.x + 28 : (node.type==='VAR' ? node.x+20 : node.x+20);
-        if(node.type === 'NOT') outX = node.x + 13;
-        svg += `<path d="M ${outX},${node.y} L ${outX + 30},${node.y}" stroke="#6366f1" stroke-width="2.5" fill="none"/>`;
-        svg += `<text x="${outX + 40}" y="${node.y + 5}" font-family="'Plus Jakarta Sans', sans-serif" font-weight="bold" fill="${cPrimary}">Out</text>`;
         svg += `</svg>`;
         return svg;
     }
 
-    function drawConnections(node, cWire) {
-        if (!node.children) return "";
-        let svg = "";
-        node.children.forEach((c, idx) => {
-            let outX = c.type.includes('N') ? c.x+28 : (c.type==='VAR'||c.type==='CONST' ? c.x+20 : c.x+20);
-            if(c.type === 'NOT') outX = c.x + 13;
-            
-            let inX = (node.type === 'OR' || node.type === 'NOR') ? node.x - 15 : node.x - 20;
-            let spread = Math.min(24, (node.children.length - 1) * 12);
-            let step = node.children.length > 1 ? spread / (node.children.length - 1) : 0;
-            let inY = (node.y - spread / 2) + (idx * step);
-
-            let midX = outX + (inX - outX) / 2;
-            svg += `<path d="M ${outX},${c.y} H ${midX} V ${inY} H ${inX}" fill="none" stroke="${cWire}" stroke-width="2"/>`;
-            svg += drawConnections(c, cWire);
-        });
-        return svg;
-    }
-
-    function drawNodes(node, bg, pri, txt, notBg) {
-        let svg = "";
-        if (node.children) node.children.forEach(c => { svg += drawNodes(c, bg, pri, txt, notBg); });
+    function drawDAGGate(node, uniqueId) {
         let nx = node.x, ny = node.y;
+        let bg = isLightMode ? '#f1f5f9' : '#1e293b';
+        let pri = isLightMode ? '#0284c7' : '#00f3ff';
+        let txt = isLightMode ? '#0f172a' : '#f8fafc';
+        let notBg = isLightMode ? '#ffffff' : '#0b0f19';
+        let svg = "";
         
-        if (node.type === 'VAR' || node.type === 'CONST') {
-            svg += `<rect x="${nx-18}" y="${ny-15}" width="36" height="30" rx="6" fill="${bg}" stroke="${pri}" stroke-width="1.5"/>`;
-            svg += `<text x="${nx}" y="${ny+5}" font-family="'Fira Code', monospace" font-size="14" font-weight="bold" fill="${pri}" text-anchor="middle">${node.value}</text>`;
-        } else if (node.type === 'AND') {
+        if (node.type === 'AND') {
             svg += `<path d="M ${nx-20},${ny-20} L ${nx},${ny-20} A 20,20 0 0,1 ${nx},${ny+20} L ${nx-20},${ny+20} Z" fill="${bg}" stroke="#818cf8" stroke-width="2"/>`;
             svg += `<text x="${nx-5}" y="${ny+3}" font-size="9" font-family="'Plus Jakarta Sans', sans-serif" text-anchor="middle" font-weight="bold" fill="${txt}">AND</text>`;
         } else if (node.type === 'OR') {
@@ -1829,42 +2103,9 @@ Identify every gate (AND, OR, NOT, NAND, NOR, XOR, XNOR), how the inputs/wires c
         } else if (node.type === 'NOR') {
             svg += `<path d="M ${nx-20},${ny-20} Q ${nx},${ny} ${nx-20},${ny+20} Q ${nx+10},${ny+20} ${nx+20},${ny} Q ${nx+10},${ny-20} ${nx-20},${ny-20} Z" fill="${bg}" stroke="${pri}" stroke-width="2"/>`;
             svg += `<circle cx="${nx+24}" cy="${ny}" r="4" fill="${notBg}" stroke="${pri}" stroke-width="2"/>`;
-            svg += `<text x="${nx}" y="${ny+3}" font-size="8.5" font-family="'Plus Jakarta Sans', sans-serif" text-anchor="middle" font-weight="bold" fill="${txt}">NOR</text>`;
+            svg += `<text x="${nx-5}" y="${ny+3}" font-size="8.5" font-family="'Plus Jakarta Sans', sans-serif" text-anchor="middle" font-weight="bold" fill="${txt}">NOR</text>`;
         }
         return svg;
-    }
-
-    function getArithmeticConfig(type) {
-        if (type === 'ha') return [ { name: 'Half Adder (Sum)', vars: ['A','B'], tt: [0,1,1,0] }, { name: 'Half Adder (Carry)', vars: ['A','B'], tt: [0,0,0,1] } ];
-        if (type === 'fa') return [ { name: 'Full Adder (Sum)', vars: ['A','B','Cin'], tt: [0,1,1,0,1,0,0,1] }, { name: 'Full Adder (Cout)', vars: ['A','B','Cin'], tt: [0,0,0,1,0,1,1,1] } ];
-        if (type === 'hs') return [ { name: 'Half Subtractor (Diff)', vars: ['A','B'], tt: [0,1,1,0] }, { name: 'Half Subtractor (Bout)', vars: ['A','B'], tt: [0,1,0,0] } ];
-        if (type === 'fs') return [ { name: 'Full Subtractor (Diff)', vars: ['A','B','Bin'], tt: [0,1,1,0,1,0,0,1] }, { name: 'Full Subtractor (Bout)', vars: ['A','B','Bin'], tt: [0,1,1,1,0,0,0,1] } ];
-        if (type === 'mult2') return [ { name: '2x2 Multiplier (P3 / MSB)', vars: ['A1','A0','B1','B0'], tt: [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1] }, { name: '2x2 Multiplier (P2)', vars: ['A1','A0','B1','B0'], tt: [0,0,0,0, 0,0,0,0, 0,0,0,1, 0,0,1,0] }, { name: '2x2 Multiplier (P1)', vars: ['A1','A0','B1','B0'], tt: [0,0,0,0, 0,0,1,1, 0,0,1,1, 0,1,0,0] }, { name: '2x2 Multiplier (P0 / LSB)', vars: ['A1','A0','B1','B0'], tt: [0,0,0,0, 0,1,0,1, 0,0,0,0, 0,1,0,1] } ];
-        if (type === 'mux21') return [ { name: '2x1 MUX (Out)', vars: ['D1','D0','S'], tt: [0,0,1,1,0,1,0,1] } ];
-        if (type === 'mux41') { let tt = []; for(let i=0; i<64; i++) { let S = (i >> 4) & 3; let D = [ (i>>3)&1, (i>>2)&1, (i>>1)&1, i&1 ]; tt.push(D[3 - S]); } return [{ name: '4x1 MUX (Out)', vars: ['S1','S0','D3','D2','D1','D0'], tt: tt }]; }
-        if (type === 'mult3') { let p = [[],[],[],[],[],[]]; for(let i=0; i<64; i++) { let A = (i >> 3) & 7, B = i & 7, prod = A * B; for(let bit=0; bit<6; bit++) p[5-bit].push((prod >> bit) & 1); } return p.map((tt, idx) => ({ name: `3x3 Multiplier (P${5-idx})`, vars: ['A2','A1','A0','B2','B1','B0'], tt: tt })); }
-    }
-
-    function renderBlockDiagram(type) {
-        const div = document.createElement('div');
-        div.className = 'block-diagram';
-        let title = "", inputs = "", outputs = "";
-        
-        if(type === 'ha') { title = "Half Adder"; inputs = "<div class='block-pin in'>A</div><div class='block-pin in'>B</div>"; outputs = "<div class='block-pin out'>Sum</div><div class='block-pin out'>Carry</div>"; }
-        else if(type === 'fa') { title = "Full Adder"; inputs = "<div class='block-pin in'>A</div><div class='block-pin in'>B</div><div class='block-pin in'>Cin</div>"; outputs = "<div class='block-pin out'>Sum</div><div class='block-pin out'>Cout</div>"; }
-        else if(type === 'hs') { title = "Half Subtractor"; inputs = "<div class='block-pin in'>A</div><div class='block-pin in'>B</div>"; outputs = "<div class='block-pin out'>Diff</div><div class='block-pin out'>Bout</div>"; }
-        else if(type === 'fs') { title = "Full Subtractor"; inputs = "<div class='block-pin in'>A</div><div class='block-pin in'>B</div><div class='block-pin in'>Bin</div>"; outputs = "<div class='block-pin out'>Diff</div><div class='block-pin out'>Bout</div>"; }
-        else if(type === 'mult2') { title = "2x2 Multiplier"; inputs = "<div class='block-pin in'>A1, A0</div><div class='block-pin in'>B1, B0</div>"; outputs = "<div class='block-pin out'>P3 (MSB)</div><div class='block-pin out'>P2</div><div class='block-pin out'>P1</div><div class='block-pin out'>P0</div>"; }
-        else if(type === 'mux21') { title = "2x1 MUX"; inputs = "<div class='block-pin in'>D1, D0</div><div class='block-pin in'>S</div>"; outputs = "<div class='block-pin out'>Out</div>"; }
-        else if(type === 'mux41') { title = "4x1 MUX"; inputs = "<div class='block-pin in'>S1, S0</div><div class='block-pin in'>D3, D2, D1, D0</div>"; outputs = "<div class='block-pin out'>Out</div>"; }
-        else if(type === 'mult3') { title = "3x3 Multiplier"; inputs = "<div class='block-pin in'>A2, A1, A0</div><div class='block-pin in'>B2, B1, B0</div>"; outputs = "<div class='block-pin out'>P5 (MSB)</div><div class='block-pin out'>P4</div><div class='block-pin out'>P3</div><div class='block-pin out'>P2</div><div class='block-pin out'>P1</div><div class='block-pin out'>P0</div>"; }
-
-        div.innerHTML = `<div class="block-box">
-            <div class="block-inputs">${inputs}</div>
-            ${title}
-            <div class="block-outputs">${outputs}</div>
-        </div>`;
-        return div;
     }
     </script>
 </body>
